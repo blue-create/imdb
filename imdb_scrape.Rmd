@@ -1,0 +1,20 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(rvest)
+```
+
+```{r}
+#xp1 <- "/html/body/div/div/div/div/div/div/div/span/div/div/div/table/tbody/tr/td"
+xp1 <- "//*[@id=\"main\"]/div/span/div/div/div[3]/table/tbody/tr/td[2]/a/@href"
+
+
+parsed_url <- read_html("https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm")
+parsed_nodes <- html_nodes(parsed_url, xpath = xp1) 
+page_links_df <- as.data.frame(html_text(parsed_nodes))
+page_links_df[1:6, ]
+```
+
