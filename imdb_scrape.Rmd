@@ -8,13 +8,13 @@ library(rvest)
 ```
 
 ```{r}
-#xp1 <- "/html/body/div/div/div/div/div/div/div/span/div/div/div/table/tbody/tr/td"
-xp1 <- "//*[@id=\"main\"]/div/span/div/div/div[3]/table/tbody/tr/td[2]/a/@href"
-
-
+# scrape top 100 most popular films' page links
 parsed_url <- read_html("https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm")
+xp1 <- "//*[@id=\"main\"]/div/span/div/div/div[3]/table/tbody/tr/td[2]/a/@href"
 parsed_nodes <- html_nodes(parsed_url, xpath = xp1) 
 page_links_df <- as.data.frame(html_text(parsed_nodes))
-page_links_df[1:6, ]
+page_links_df[1:3, ]
+
+# add imdb.com to beginning of link
 ```
 
