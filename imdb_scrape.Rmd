@@ -25,6 +25,8 @@ nodes <- html_nodes(parsed_url, "#main a")
 nodes <- nodes[-1] # get rid of NA
 # Get titles
 titles <- html_text(nodes, trim = TRUE)
+titles <- unique(titles) # for some reason, there are nodes with nothing but "", which I excluded here
+#titles <- titles[-1] # another NA???
 
 # Create imdb links to scrape through  
 sub_urls <- html_attr(nodes, 'href') # extract parts of the link 
@@ -40,6 +42,12 @@ getdescription <- function(url){
 
 # Use lapply() to apply the getdescription() function to each URL 
 description <- lapply(m_urls, getdescription)
+# Get rid of duplicates
+desc <- unique(description)
+
+dat <- data.frame(cbind(titles, desc))
+
+# Issues to be solved: scraping the links isn't perfect and actually includes a lot of NA's and one annoying missing movie title 
 ```
 
 
