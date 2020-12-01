@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-```{r}
+```{r message = FALSE}
 library(rvest)
 ```
 
@@ -16,5 +16,31 @@ page_links_df <- as.data.frame(html_text(parsed_nodes))
 page_links_df[1:3, ]
 
 # add imdb.com to beginning of link
+
 ```
+
+Don't run this unless you know you have time (> 5min).
+```{r  }
+nodes <- html_nodes(parsed_url, "#main a")
+nodes <- nodes[-1] # get rid of NA
+# Get titles
+titles <- html_text(nodes, trim = TRUE)
+
+# Create imdb links to scrape through  
+sub_urls <- html_attr(nodes, 'href') # extract parts of the link 
+m_urls <- paste0('http://www.imdb.com', sub_urls) # Concatenate with part that is missing from link
+
+# adapted function from stackoverflow to get description of a movie 
+getdescription <- function(url){
+  page <- read_html(url)
+  nodes <- html_nodes(page, 'p span')
+  cast <- html_text(nodes, trim = TRUE)
+  return(cast)
+}
+
+# Use lapply() to apply the getdescription() function to each URL 
+description <- lapply(m_urls, getdescription)
+```
+
+
 
