@@ -15,8 +15,7 @@ dat<-read.csv("imdb_1972-2019.csv")
 #Exploring the dataset
 names(dat)
 
-#Deleting the variables that we don´t want to use
-dat <- dat[, -c(1, 9:12)]
-
-names(dat)
+#Selecting the variables we are going to use
+dat1<-select(dat,Title,Year,Rating,Metascore,Votes,Description,Genre)
+names(dat1)
 ```
