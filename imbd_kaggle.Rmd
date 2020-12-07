@@ -1,0 +1,22 @@
+---
+title: "imdb_kaggle"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+ library(dplyr)
+```
+
+## Kaggle Data
+
+```{r}
+dat<-read.csv("imdb_1972-2019.csv")
+
+#Exploring the dataset
+names(dat)
+
+#Deleting the variables that we don´t want to use
+dat <- dat[, -c(1, 9:12)]
+
+names(dat)
+```
