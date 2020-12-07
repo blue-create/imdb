@@ -4,7 +4,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
- library(dplyr)
+library(dplyr)
+library(quanteda)
+library(ggplot2)
+library(ggrepel)
+library(quanteda.textmodels)
+theme_set(theme_minimal())
 ```
 
 ## Kaggle Data
@@ -18,4 +23,19 @@ names(dat)
 #Selecting the variables we are going to use
 dat1<-select(dat,Title,Year,Rating,Metascore,Votes,Description,Genre)
 names(dat1)
+
+```
+
+## Structural Topic Model
+
+```{r}
+as.data.frame(dat1)
+corp <- corpus(dat1,
+               text_field = "Description", 
+               docid_field = "Title")
+
+is.data.frame(dat1)
+class(dat1$Title)
+class(dat1$Description)
+corpus(dat1)
 ```
