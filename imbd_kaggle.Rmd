@@ -26,6 +26,8 @@ dat1 <- dat %>%
   distinct(Title, .keep_all = TRUE)
 names(dat1)
 
+# If you want to look at the duplicates 
+dat %>% filter(duplicated(.[["Title"]]))
 ```
 
 ## Structural Topic Model
