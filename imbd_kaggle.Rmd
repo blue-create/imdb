@@ -17,11 +17,13 @@ theme_set(theme_minimal())
 ```{r}
 dat<-read.csv("imdb_1972-2019.csv")
 
-#Exploring the dataset
+# Exploring the dataset
 names(dat)
 
-#Selecting the variables we are going to use
-dat1<-select(dat,Title,Year,Rating,Metascore,Votes,Description,Genre)
+# Selecting the variables we are going to use
+dat1 <- dat %>% 
+  select(Title, Year, Rating, Metascore, Votes, Description, Genre) %>% 
+  distinct(Title, .keep_all = TRUE)
 names(dat1)
 
 ```
@@ -29,13 +31,22 @@ names(dat1)
 ## Structural Topic Model
 
 ```{r}
-as.data.frame(dat1)
-corp <- corpus(dat1,
-               text_field = "Description", 
-               docid_field = "Title")
+# Turn into corpus, linguistic data 
+corp1 <- corpus(dat1, 
+       text_field = "Description",
+       docid_field = "Title")
 
-is.data.frame(dat1)
-class(dat1$Title)
-class(dat1$Description)
-corpus(dat1)
+# Add Title
+docvars(corp1, "Title") <- dat1$Title
+
+# Look at the data
+docvars(corp1)  
+
+# Create a document-feature matrix to enable text analysis
+corp_dfm <- dfm(corp1) 
+
+# Please note that we first have to figure out dir parameters and also given the size of the document, 
+# this step is going to take a long time, > 10min.
+# wfish <- textmodel_wordfish(corp_dfm, dir = c(3, 21))
+# summary(wfish)
 ```
