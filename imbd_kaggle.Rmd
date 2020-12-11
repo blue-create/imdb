@@ -10,6 +10,10 @@ library(ggplot2)
 library(ggrepel)
 library(quanteda.textmodels)
 theme_set(theme_minimal())
+
+require(quanteda)
+require(quanteda.corpora)
+library(seededlda) ######## NOTE: You might need to install this
 ```
 
 ## Kaggle Data
@@ -22,33 +26,77 @@ names(dat)
 
 # Selecting the variables we are going to use
 dat1 <- dat %>% 
-  select(Title, Year, Rating, Metascore, Votes, Description, Genre) %>% 
+  select(Title, Year, Rating, Metascore, Description, Genre, Runtime..Minutes., Revenue..Millions.) %>% 
   distinct(Title, .keep_all = TRUE)
 names(dat1)
 
 # If you want to look at the duplicates 
 dat %>% filter(duplicated(.[["Title"]]))
+dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
+
+# convert factors to character columns
+dat2 <- dat1 %>%
+  mutate_if(is.factor, as.character)
+
+sapply(dat2, class) # to see current classes
+
 ```
 
 ## Structural Topic Model
 
+
 ```{r}
 # Turn into corpus, linguistic data 
-corp1 <- corpus(dat1, 
+corp1 <- corpus(dat2, 
        text_field = "Description",
        docid_field = "Title")
 
-# Add Title
-docvars(corp1, "Title") <- dat1$Title
-
-# Look at the data
-docvars(corp1)  
+docvars(corp1, "Title") <- dat1$Title ## Add back Title
 
 # Create a document-feature matrix to enable text analysis
-corp_dfm <- dfm(corp1) 
+corp_dfm <- dfm(corp1, remove_punct = TRUE, remove_numbers = TRUE,
+                remove_symbol = TRUE, remove = stopwords("en")) %>%
+  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
+# only keeps top 5% of words - play around with (no doc limit)
 
-# Please note that we first have to figure out dir parameters and also given the size of the document, 
-# this step is going to take a long time, > 10min.
-# wfish <- textmodel_wordfish(corp_dfm, dir = c(3, 21))
-# summary(wfish)
+tmod_lda_10 <- textmodel_lda(corp_dfm, k = 10) # k is number of topics
+#tmod_lda_15 <- textmodel_lda(corp_dfm, k = 15) 
+#tmod_lda_20 <- textmodel_lda(corp_dfm, k = 20) 
+
+terms(tmod_lda_10, 15) # show top 15 most frequent terms of each topic
+
+# how do you search by film 
+```
+
+Note: I started taking notes on what each of the categories could represent. 
+Unfortunately, it seems like the model will save a different value each time it runs new. 
+So we will need to figure out the methodology of how we want to save it and then check the results
+
+ideas for k = 10 model
+# topic1: military/spy
+# topic2: romance
+# topic3: ????
+# topic4: nyc life?
+# topic5: hs/college (teens)
+# topic6: secrets
+# topic7: family
+# topic8: intergalactic adventure/war
+# topic9: crime
+# topic10: ????
+
+
+```{r}
+head(topics(tmod_lda_10), 20) # most likely topics by film
+
+# assign topic as a new document-level variable
+corp_dfm$Topic <- topics(tmod_lda_10)
+
+# cross-table of the topic frequency (to see breakdown)
+table(corp_dfm$Topic)
+
+# explore the results
+docvars(corp_dfm)
+
+# this gives all the films of a specific topic
+corp_dfm$Title[corp_dfm$Topic == "topic5"]
 ```
