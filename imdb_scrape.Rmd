@@ -21,57 +21,57 @@ library(openxlsx)
 ```
 
 ```{r scrape 100 most popular films based on rating}
+# Page 1
 # Scrape HTML content from a given URL
-parsed_url <- read_html("https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm")
+url1 <- read_html("https://www.imdb.com/search/title/?year=2020&title_type=feature&")
 
 # Call node based on xpath
-nodes <- html_nodes(parsed_url, "#main a")
+nodes1 <- html_nodes(url1, ".lister-item-header a")
 
 # Create IMDb links to scrape through 
-sub_urls <- html_attr(nodes, 'href') # extract parts of the link 
-sub <- sub_urls[!is.na(sub_urls)] # remove NA
-ub <- unique(sub) # remove duplicates
-m_urls <- paste0('http://www.imdb.com', ub) # Concatenate with part that is missing from link
+sub_urls1 <- html_attr(nodes1, 'href') # extract parts of the link 
+m_urls1 <- paste0('http://www.imdb.com', sub_urls1) # Concatenate with part that is missing from link
 
+# Page 2
+# Scrape HTML content from a given URL
+url2 <- read_html("https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt")
+
+# Call node based on xpath
+nodes2 <- html_nodes(url2, ".lister-item-header a")
+
+# Create IMDb links to scrape through 
+sub_urls2 <- html_attr(nodes2, 'href') # extract parts of the link 
+m_urls2 <- paste0('http://www.imdb.com', sub_urls2) # Concatenate with part that is missing from link
+```
+
+```{r build dataframe for description}
 # Function to scrape description 
 getdescription <- function(url){
   page <- read_html(url)
-  nodes <- html_nodes(page, '.canwrap , #titleStoryLine p , .summary_text , .ratingValue span')
+  nodes <- html_nodes(page, '.canwrap span , .see-more.canwrap')
   cast <- html_text(nodes, trim = TRUE)
   return(cast)
 }
 
 # Use lapply() to apply the getdescription() function to each URL 
-desc <- lapply(m_urls, getdescription)
-```
-
-```{r build dataframe for description}
+desc1 <- lapply(m_urls1, getdescription)
+desc2 <- lapply(m_urls2, getdescription)
 # Get individual length of lists 
-len <- sapply(desc,length)
-
+len1 <- sapply(desc1,length)
+len2 <- sapply(desc2,length)
 # Get longest list 
-n <- max(len)
-
+n1 <- max(len1)
+n2 <- max(len2)
 # Get number of NA's to fill for lists shorter than longest
-lenNA <- n - len
-
+lenNA1 <- n1 - len1
+lenNA2 <- n2 - len2
 # Create a df that fills every list shorter than 11 with NA's
-df <- data.frame(t(mapply(function(x,y) c(x, rep(NA, y)), desc, lenNA)))
+df1 <- data.frame(t(mapply(function(x,y) c(x, rep(NA, y)), desc1, lenNA1)))
+df2 <- data.frame(t(mapply(function(x,y) c(x, rep(NA, y)), desc2, lenNA2)))
 
 # Cleaning
-
-# Shift rows with missing information to the right 
-df[which(grepl("[A-Za-z]", df$X1)), 4:8] <-  df[which(grepl("[A-Za-z]", df$X1)), 1:5]
-
-# Fill missing information with NA
-df[which(grepl("[A-Za-z]", df$X1)), 1:3] <- NA
-
-df[which(grepl("Genres", df$X7)), 8] <-  df[which(grepl("Genres", df$X7)), 7]
-df[which(grepl("Genres", df$X7)), 7] <- NA
-
-# Clean columns
-df$X7 <- df$X7 %>% 
-  str_replace(., "Plot Keywords:", "") %>% 
+df1$X2 <- df1$X2 %>% 
+  gsub("Plot Keywords:", "", .) %>% 
   gsub("SeeAll\\([0-9]+\\)", "", .) %>% 
   gsub("See All", "", .) %>% 
   gsub("\\»", "", .) %>% 
@@ -79,46 +79,117 @@ df$X7 <- df$X7 %>%
   gsub("\\s+"," ", .) %>% 
   gsub(" \\| ", ", ", .)
 
-df$X8 <- df$X8 %>% 
-  gsub("Genres:\n ", "", .) %>% 
-  gsub("\\|", ",", .) %>% 
-  gsub("\n", "", .)
+df1$X13 <- df1$X13 %>% 
+  gsub("Genres:\n", "", .) %>% 
+  gsub("\\s+"," ", .) %>% 
+  gsub(" \\| ", ", ", .) %>% 
+  gsub("\\|", "", .)
 
-description <- df %>% 
-  select(-c(X6, X2, X3)) %>% 
-  rename(rating = X1, 
-         description = X4,
-         storyline = X5,
-         plot_keywords = X7,
-         genres = X8)
+df2$X2 <- df2$X2 %>% 
+  gsub("Plot Keywords:", "", .) %>% 
+  gsub("SeeAll\\([0-9]+\\)", "", .) %>% 
+  gsub("See All", "", .) %>% 
+  gsub("\\»", "", .) %>% 
+  gsub("\\([0-9]+\\)", "", .) %>%
+  gsub("\\s+"," ", .) %>% 
+  gsub(" \\| ", ", ", .)
+
+df2$X13 <- df2$X13 %>% 
+  gsub("Genres:\n", "", .) %>% 
+  gsub("\\s+"," ", .) %>% 
+  gsub(" \\| ", ", ", .) %>% 
+  gsub("\\|", "", .)
+
+# Build df
+df1 <- select(df1, X1, X2, X13)
+df2 <- select(df2, X1, X2, X13)
+
+desc <- rbind(df1, df2)
+
+description <- desc %>% 
+  rename(description = X1, 
+         plot_keywords = X2,
+         genres = X13)
 ```
 
+
+```{r build df for metascore and other data}
+# Function to scrape metascore and other data
+getmeta <- function(url){
+  page <- read_html(url)
+  nodes <- html_nodes(page, '#titleDetails')
+  cast <- html_text(nodes, trim = TRUE)
+  return(cast)
+}
+
+# Use lapply() to apply the getmeta() function to each URL 
+meta1 <- lapply(m_urls1, getmeta)
+meta2 <- lapply(m_urls2, getmeta)
+
+# Create a df that fills every list shorter than 11 with NA's
+
+meta <- data.frame(cbind(append(meta1, meta2)))
+colnames(meta) <- "X"
+
+# Extract the information snippets
+meta$country <- gsub(".*Country\\s*|Language.*", "", meta$X)
+meta$profit <- gsub(".*Gross\\:s*|See.*", "", meta$X)
+meta$production <- gsub(".*Production Co\\:s*|See.*", "", meta$X)
+meta$runtime <- gsub(".*Runtime\\:s*|min.*", "", meta$X)
+
+# Cleaning
+meta$country <- meta$country %>% 
+  gsub("\\s+"," ", .) %>% 
+  gsub("\\|", ",", .) %>% 
+  gsub("\\:", "", .)
+
+meta$profit <- gsub("\\$*", "", meta$profit)
+meta$runtime <- gsub("\\s+"," ", meta$runtime)
+
+meta[which(grepl("Edit", meta$profit)), 3] <- NA
+meta[which(grepl("Edit", meta$runtime)), 5] <- NA
+meta[32, 4] <- "See-Saw Films, British Film Institute (BFI), BBC Films"
+
+meta <- select(meta, -X)
+```
 
 
 ```{r build dataframe for title and year}
 # Scrape HTML content from a given URL
-parsed_url <- read_html("https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm")
-
+url1 <- read_html("https://www.imdb.com/search/title/?year=2020&title_type=feature&")
+url2 <- read_html("https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt")
 # Call node based on xpath
-title_nodes <- html_nodes(parsed_url, "a+ .secondaryInfo , #main a")
+title_nodes1 <- html_nodes(url1, ".text-muted.unbold , .lister-item-header a")
+title_nodes2 <- html_nodes(url2, ".text-muted.unbold , .lister-item-header a")
 
 # Strip the HTML tags and extract title and year 
-titles <- html_text(title_nodes)
-
-# Remove blanks 
-col <- titles[!titles %in% c("", " ")]
+titles1 <- html_text(title_nodes1)
+titles2 <- html_text(title_nodes2)
 
 # Create df 
-col1 <- as.data.frame(matrix(col, ncol = 2, byrow = TRUE), 
+titles <- as.data.frame(matrix(titles, ncol = 2, byrow = TRUE), 
                       stringsAsFactors = FALSE)
+colnames(titles) <- c("Title", "Year")
 
-# Remove brackets 
-col1[] <- lapply(col1, function(x) gsub("[][(),]", "", x))
-
-# Define column names
-colnames(col1) <- c("Title", "Year")
-
+# Cleaning 
+titles$Year <- titles$Year %>% 
+  gsub("\\(", "",.) %>% 
+  gsub("\\)", "", .) %>% 
+  gsub("[A-Za-z]", "", .) %>% 
+  gsub("\\s+", "", .)
 ```
+
+```{r }
+# Call node based on xpath
+rating1 <- html_nodes(url1, ".text-muted+ .text-muted , .text-muted+ span , .ratings-bar+ .text-muted , .ratings-imdb-rating strong , .ratings-metascore")
+rating2 <- html_nodes(url2, ".text-muted+ .text-muted , .text-muted+ span , .ratings-bar+ .text-muted , .ratings-imdb-rating strong , .ratings-metascore")
+
+# Strip the HTML tags and extract title and year 
+r1 <- html_text(rating1)
+r2 <- html_text(rating2)
+```
+
+
 
 ``` {r final}
 # Combine df
