@@ -10,11 +10,9 @@ library(ggplot2)
 library(ggrepel)
 library(quanteda.textmodels)
 theme_set(theme_minimal())
-library(stm) # maybe replace seededlda NOTE: You might need to install this
-
+library(stm) # NOTE: You might need to install this
 require(quanteda)
 require(quanteda.corpora)
-library(seededlda) # NOTE: You might need to install this
 ```
 
 ## Kaggle Data
@@ -45,7 +43,7 @@ sapply(dat2, class) # to see current classes
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
-names(total)
+names(total) # this needs to pull from the scrapped data set
 sapply(total, class) # to see current classes
 
 # select cols to keep and remove duplicates
@@ -59,7 +57,7 @@ names(dat2020)
 total %>% filter(duplicated(.[["Title"]]))
 dat2020 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
-# convert factors to character columns  ### come back and don't apply to rating or year !!!
+# convert factors to character columns  ### come back to - shouldn't apply factorization to rating or year
 dat2020 <- dat2020 %>%
   mutate_if(is.factor, as.character)
 
@@ -74,7 +72,9 @@ dat2020 <- na.omit(dat2020) #remove films missing description
 
 
 ```{r}
-# Turn into corpus, linguistic data 
+# initialize corpus and dfm objects
+
+# Turn kaggle data into corpus
 corp1 <- corpus(dat2, 
        text_field = "Description",
        docid_field = "Title")
@@ -88,43 +88,34 @@ corp_dfm <- dfm(corp1,
                 remove_symbol = TRUE, 
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
-                remove = stopwords("en")) #%>%
-  #dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
+                remove = stopwords("en")) %>%
+  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
   # only keeps top 5% of words - play around with (no doc limit)
 
+######### Scraped Data ################
+  
+# make corpus from scraped 2020 imdb data
+corp_2020 <- corpus(dat2020, 
+       text_field = "description",
+       docid_field = "Title")
 
-#####VERSION 1#########
-# this version works, but not sure if we can use seededlda to then fit 
-# the model to a new (ie the 2020 scraped data) corpus
-# create the text model
-tmod_lda_10 <- textmodel_lda(corp_dfm, k = 10) # k is number of topics
-#tmod_lda_15 <- textmodel_lda(corp_dfm, k = 15) 
-#tmod_lda_20 <- textmodel_lda(corp_dfm, k = 20) 
+docvars(corp_2020, "Title") <- dat2020$Title ## Add back Title
 
-terms(tmod_lda_10, 15) # show top 15 most frequent terms of each topic
-
-head(topics(tmod_lda_10), 20) # most likely topics by film
-
-# assign topic as a new document-level variable
-corp_dfm$Topic <- topics(tmod_lda_10)
-
-# cross-table of the topic frequency (to see breakdown)
-table(corp_dfm$Topic)
-
-# explore the results
-docvars(corp_dfm)
-
-# this gives all the films of a specific topic
-corp_dfm$Title[corp_dfm$Topic == "topic5"]
+# make scrapped corpus into dfm 
+corp_2020_dfm <- dfm(corp_2020,
+                remove_punct = TRUE,
+                remove_symbols = TRUE,
+                remove_separators = TRUE,
+                split_hyphens = TRUE,
+                remove_numbers = TRUE,   
+                remove = stopwords("en")) 
 
 ```
 
 ```{r}
-#######VERSION 2: using STM instead of seededlda #############
-# I actually recommend that we do NOT use this
-# I would like to find a different package if possible 
+#STM
 
-# build topic model from old data
+# build topic model from kaggle data
 corp_dfm_stm <- asSTMCorpus(corp_dfm)
 mod <- stm(documents = corp_dfm_stm$documents, vocab = corp_dfm_stm$vocab,
            K = 10, data = corp_dfm_stm$data,
@@ -139,25 +130,6 @@ dim(mod$beta$logbeta[[1]])
 labels <- apply(sageLabels(mod)$marginal$frex, 1,
                 function(x){ paste(x[1:4], collapse = "-") })
 
-
-# make corpus from scraped 2020 imdb data
-# Turn into corpus, linguistic data 
-corp_2020 <- corpus(dat2020, 
-       text_field = "description",
-       docid_field = "Title")
-
-docvars(corp_2020, "Title") <- dat2020$Title ## Add back Title
-
-# make scrapped corpus into dfm 
-corp_2020_dfm <- dfm(corp_2020,
-                remove_punct = TRUE,
-                remove_symbols = TRUE,
-                remove_separators = TRUE,
-                split_hyphens = TRUE,
-                remove_numbers = TRUE,   
-                remove = stopwords("en")) %>%
-  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile")
-
 # make dfm into STM corpus
 new_docs <- asSTMCorpus(corp_2020_dfm) ## This is where films are dropped if na.omit not run (above)
 
@@ -170,37 +142,13 @@ nds <- fitNewDocuments(mod, documents = new_stm$documents,
 
 thetas <- data.frame(nds$theta)
 colnames(thetas) <- labels
+rownames(thetas) <- paste(docvars(corp_2020_dfm)$Title)
 
-inflated <- round(thetas * outer(ntoken(corp_2020_dfm), rep(1, 10))) # what is rep doing? is 1,10 right?
-rownames(inflated) <- paste(docvars(corp_2020_dfm)$Title,
-                            docvars(corp_2020_dfm)$rating, # adds rating to title (can remove if we want)
-                            sep = "-")
+# next step: link this spreadsheet (thetas by topic) to 2020 film data to create model
 
-# check out inflated in environment
-
-#cannot get this part to work
+#probably not useful but cute!
 library(ca)
-plot(ca(inflated))
+plot(ca(thetas))
 
 ```
-(Below based on seededlda results)
-Note: I started taking notes on what each of the categories could represent. (Seededlda version.)
-Unfortunately, it seems like the model will save a different value each time it runs new. 
-So we will need to figure out the methodology of how we want to save it and then check the results
 
-ideas for k = 10 model
-# topic1: military/spy
-# topic2: romance
-# topic3: ????
-# topic4: nyc life?
-# topic5: hs/college (teens)
-# topic6: secrets
-# topic7: family
-# topic8: intergalactic adventure/war
-# topic9: crime
-# topic10: ????
-
-
-```{r}
-
-```
