@@ -13,6 +13,7 @@ theme_set(theme_minimal())
 library(stm) # NOTE: You might need to install this
 require(quanteda)
 require(quanteda.corpora)
+library(igraph)# NOTE: You might need to install this
 ```
 
 ## Kaggle Data
@@ -82,14 +83,15 @@ corp1 <- corpus(dat2,
 docvars(corp1, "Title") <- dat1$Title ## Add back Title
 
 # Create a document-feature matrix to enable text analysis
+#With no word limits we get 15.003 columns (so possible variables)
 corp_dfm <- dfm(corp1, 
                 remove_punct = TRUE, 
                 remove_numbers = TRUE,
                 remove_symbol = TRUE, 
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
-                remove = stopwords("en")) %>%
-  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
+                remove = stopwords("en")) #%>%
+  #dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
   # only keeps top 5% of words - play around with (no doc limit)
 
 ######### Scraped Data ################

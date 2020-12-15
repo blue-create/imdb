@@ -127,7 +127,6 @@ meta1 <- lapply(m_urls1, getmeta)
 meta2 <- lapply(m_urls2, getmeta)
 
 # Create a df that fills every list shorter than 11 with NA's
-
 meta <- data.frame(cbind(append(meta1, meta2)))
 colnames(meta) <- "X"
 
