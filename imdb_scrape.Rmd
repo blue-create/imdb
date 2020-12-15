@@ -24,10 +24,8 @@ library(openxlsx)
 # Page 1
 # Scrape HTML content from a given URL
 url1 <- read_html("https://www.imdb.com/search/title/?year=2020&title_type=feature&")
-
 # Call node based on xpath
 nodes1 <- html_nodes(url1, ".lister-item-header a")
-
 # Create IMDb links to scrape through 
 sub_urls1 <- html_attr(nodes1, 'href') # extract parts of the link 
 m_urls1 <- paste0('http://www.imdb.com', sub_urls1) # Concatenate with part that is missing from link
@@ -35,10 +33,8 @@ m_urls1 <- paste0('http://www.imdb.com', sub_urls1) # Concatenate with part that
 # Page 2
 # Scrape HTML content from a given URL
 url2 <- read_html("https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt")
-
 # Call node based on xpath
 nodes2 <- html_nodes(url2, ".lister-item-header a")
-
 # Create IMDb links to scrape through 
 sub_urls2 <- html_attr(nodes2, 'href') # extract parts of the link 
 m_urls2 <- paste0('http://www.imdb.com', sub_urls2) # Concatenate with part that is missing from link
@@ -68,6 +64,23 @@ lenNA2 <- n2 - len2
 # Create a df that fills every list shorter than 11 with NA's
 df1 <- data.frame(t(mapply(function(x,y) c(x, rep(NA, y)), desc1, lenNA1)))
 df2 <- data.frame(t(mapply(function(x,y) c(x, rep(NA, y)), desc2, lenNA2)))
+
+# Correct inconsistencies 
+# Table 1
+df1[which(!(grepl("Plot", df1$X2))), 13] <- df1[which(!(grepl("Plot", df1$X2))), 2]
+df1[which(!(grepl("Plot", df1$X2))), 2] <- NA
+df1[which(grepl("Genres", df1$X5)), 13] <- df1[which(grepl("Genres", df1$X5)), 5]
+df1[which(grepl("Genres", df1$X7)), 13] <- df1[which(grepl("Genres", df1$X7)), 7]
+df1[which(grepl("Genres", df1$X9)), 13] <- df1[which(grepl("Genres", df1$X9)), 9]
+df1[which(grepl("Genres", df1$X11)), 13] <- df1[which(grepl("Genres", df1$X11)), 11]
+
+# Table 2
+df2[which(!(grepl("Plot", df2$X2))), 13] <- df2[which(!(grepl("Plot", df2$X2))), 2]
+df2[which(!(grepl("Plot", df2$X2))), 2] <- NA
+df2[which(grepl("Genres", df2$X5)), 13] <- df2[which(grepl("Genres", df2$X5)), 5]
+df2[which(grepl("Genres", df2$X7)), 13] <- df2[which(grepl("Genres", df2$X7)), 7]
+df2[which(grepl("Genres", df2$X9)), 13] <- df2[which(grepl("Genres", df2$X9)), 9]
+
 
 # Cleaning
 df1$X2 <- df1$X2 %>% 
@@ -166,7 +179,7 @@ titles1 <- html_text(title_nodes1)
 titles2 <- html_text(title_nodes2)
 
 # Create df 
-titles <- as.data.frame(matrix(titles, ncol = 2, byrow = TRUE), 
+titles <- as.data.frame(matrix(c(titles1, titles2), ncol = 2, byrow = TRUE), 
                       stringsAsFactors = FALSE)
 colnames(titles) <- c("Title", "Year")
 
@@ -178,20 +191,31 @@ titles$Year <- titles$Year %>%
   gsub("\\s+", "", .)
 ```
 
-```{r }
-# Call node based on xpath
-rating1 <- html_nodes(url1, ".text-muted+ .text-muted , .text-muted+ span , .ratings-bar+ .text-muted , .ratings-imdb-rating strong , .ratings-metascore")
-rating2 <- html_nodes(url2, ".text-muted+ .text-muted , .text-muted+ span , .ratings-bar+ .text-muted , .ratings-imdb-rating strong , .ratings-metascore")
+```{r build df for rating}
+# Function to scrape metascore and other data
+getrating <- function(url){
+  page <- read_html(url)
+  nodes <- html_nodes(page, '.titleReviewBar , .ratings_wrapper')
+  cast <- html_text(nodes, trim = TRUE)
+  return(cast)
+}
 
-# Strip the HTML tags and extract title and year 
-r1 <- html_text(rating1)
-r2 <- html_text(rating2)
+url_1 <- "https://www.imdb.com/search/title/?year=2020&title_type=feature&"
+url_2 <- "https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt"
+
+# Get rating for both pages
+rat1 <- lapply(url_2, getrating)
+rat2 <- lapply(url_1, getrating)
+
+# Build df
+rating <- data.frame(cbind(append(rat1, rat2)))
+colnames(rating) <- "X"
 ```
 
 
 
 ``` {r final}
 # Combine df
-total <- cbind(col1, description)
+total <- cbind(titles, description, meta)
 write.xlsx(total, 'scraped_data.xlsx')
 ```
