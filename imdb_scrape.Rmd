@@ -7,11 +7,11 @@ output:
 
 # Info 
 
-The current application uses data from the IMDb Charts, which are subject to change. The list itself is called "Popular Movies", and determined by an unidentified method by IMDb Users and sorted by Ranking. The list can be accessed here: https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm
+The current application uses data from the IMDb Charts, which are subject to change. The list itself is called "Feature Film, Released between 2020-01-01 and 2020-12-31 (Sorted by Popularity Ascending)" and can be accessed here: https://www.imdb.com/search/title/?year=2020&title_type=feature&
 
 # Outline 
 
-After loading the libraries, the 100 most popular films are scraped by vectorization. The second data chunk is dedicated to retrieving some basic characteristics: rating, metascore, description, scoreline, plot keywords and genres. The third data chunk is dedicated to acquiring the movies' title and year of screening.
+After loading the libraries, two html lists for each page are created. What follows are code chunks for certain information snippets: description, profit and runtime, title and year, rating and metascore, actors and directors as well as votes. Sometimes, the information was available on the list, other times the information was to be found on the page of the movie itself. 
 
 ```{r message = FALSE}
 library(rvest)
@@ -40,7 +40,7 @@ sub_urls2 <- html_attr(nodes2, 'href') # extract parts of the link
 m_urls2 <- paste0('http://www.imdb.com', sub_urls2) # Concatenate with part that is missing from link
 ```
 
-```{r build dataframe for description}
+```{r description}
 # Function to scrape description 
 getdescription <- function(url){
   page <- read_html(url)
@@ -120,14 +120,14 @@ df2 <- select(df2, X1, X2, X13)
 desc <- rbind(df1, df2)
 
 description <- desc %>% 
-  rename(description = X1, 
-         plot_keywords = X2,
-         genres = X13)
+  select(X1, X13) %>% 
+  rename(Description = X1, 
+         Genres = X13)
 ```
 
 
-```{r build df for metascore and other data}
-# Function to scrape metascore and other data
+```{r profit and runtime}
+# Function to scrape profit and runtime
 getmeta <- function(url){
   page <- read_html(url)
   nodes <- html_nodes(page, '#titleDetails')
@@ -162,11 +162,14 @@ meta[which(grepl("Edit", meta$profit)), 3] <- NA
 meta[which(grepl("Edit", meta$runtime)), 5] <- NA
 meta[32, 4] <- "See-Saw Films, British Film Institute (BFI), BBC Films"
 
-meta <- select(meta, -X)
+metadat <- meta %>% 
+  select(profit, runtime) %>% 
+  rename(Runtime..Minutes. = runtime,
+         Revenue..Millions. = profit)
 ```
 
 
-```{r build dataframe for title and year}
+```{r title and year}
 # Scrape HTML content from a given URL
 url1 <- read_html("https://www.imdb.com/search/title/?year=2020&title_type=feature&")
 url2 <- read_html("https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt")
@@ -191,8 +194,8 @@ titles$Year <- titles$Year %>%
   gsub("\\s+", "", .)
 ```
 
-```{r build df for rating}
-# Function to scrape metascore and other data
+```{r rating and metascore}
+# Function to scrape Metascore and other data
 getrating <- function(url){
   page <- read_html(url)
   nodes <- html_nodes(page, '.titleReviewBar , .ratings_wrapper')
@@ -200,22 +203,88 @@ getrating <- function(url){
   return(cast)
 }
 
-url_1 <- "https://www.imdb.com/search/title/?year=2020&title_type=feature&"
-url_2 <- "https://www.imdb.com/search/title/?title_type=feature&year=2020-01-01,2020-12-31&start=51&ref_=adv_nxt"
-
 # Get rating for both pages
-rat1 <- lapply(url_2, getrating)
-rat2 <- lapply(url_1, getrating)
+rat1 <- lapply(m_urls1, getrating)
+rat2 <- lapply(m_urls2, getrating)
 
-# Build df
-rating <- data.frame(cbind(append(rat1, rat2)))
-colnames(rating) <- "X"
+# Create df
+rat <- as.data.frame(matrix(c(rat1, rat2), ncol = 1, byrow = TRUE), 
+                      stringsAsFactors = FALSE)
+colnames(rat) <- "x"
+
+# Extract information 
+rat$Rating <- as.numeric(str_extract(rat$x,"(\\d\\.\\d).*?"))
+rat$Metascore <- str_extract(rat$x, "[[:punct:]]+\\s[[:punct:]][[:digit:]]*")
+
+# Cleaning
+rat$Metascore <- gsub('[[:punct:] ]+',' ', rat$Metascore)
+rat$Metascore[rat$Metascore == " "] <- NA
+rating <- rat %>% select(Rating, Metascore)
 ```
 
+```{r actors directors}
+# Call node based on xpath
+actd1 <- html_nodes(url1, ".text-muted~ .text-muted+ p , .ratings-bar~ .text-muted+ p")
+actd2 <- html_nodes(url2, ".text-muted~ .text-muted+ p , .ratings-bar~ .text-muted+ p")
+
+# Strip the HTML tags and extract title and year 
+actd_1 <- html_text(actd1)
+actd_2 <- html_text(actd2)
+
+# Create df 
+actdir <- as.data.frame(matrix(c(actd_1, actd_2), ncol = 1, byrow = TRUE), 
+                      stringsAsFactors = FALSE)
+colnames(actdir) <- "X"
+
+# Extract information 
+actdir$Actors <- gsub(".*Director\\s*|Stars.*", "", actdir$X)
+actdir$Director <- gsub(".*Stars\\s*", "", actdir$X)
+
+# Cleaning 
+actdir$Actors <- actdir$Actors %>% 
+  gsub("\\s+"," ", .) %>% 
+  gsub("\\|", ",", .) %>% 
+  gsub("s\\:", "", .) %>% 
+  gsub("\\:", "", .) %>% 
+  gsub(" , ", "", .)
+actdir$Director <- actdir$Director %>% 
+  gsub("\\s+"," ", .) %>% 
+  gsub("\\|", ",", .) %>% 
+  gsub("\\:", "", .) %>% 
+  gsub(" , ", "", .)
+
+crew <- actdir %>% 
+  select(Actors, Director)
+
+```
+
+```{r votes}
+# Extract votes based on xpath
+v1 <- html_text(html_nodes(url1, ".sort-num_votes-visible")) # 17 missing
+v2 <- html_text(html_nodes(url2, ".sort-num_votes-visible")) # 60, 88, 91, 100
+
+# Create df
+votes <- data.frame(cbind(append(v1, v2)))
+colnames(votes) <- "X"
+
+# Extract information & clean 
+votes$Votes <- str_extract(votes$X, "\\d+(?:,\\d+)?")
+v <- select(votes, Votes)
+
+# Insert NA's for missing information
+v$names <- rownames(v)
+missing <- list(Votes = c(NA, NA, NA, NA, NA), names = c(17, 60, 88, 91, 100))
+vo <- rbind(v, missing)
+vot <-arrange(vo, as.numeric(names))
+
+
+vote <- vot %>% 
+  select(Votes)
+```
 
 
 ``` {r final}
 # Combine df
-total <- cbind(titles, description, meta)
+total <- cbind(titles, rating, vote, description, metadat, crew)
 write.xlsx(total, 'scraped_data.xlsx')
 ```
