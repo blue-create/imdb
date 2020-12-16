@@ -44,13 +44,14 @@ sapply(dat2, class) # to see current classes
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
+total<-read.xlsx("scraped_data.xlsx")
 names(total) # this needs to pull from the scrapped data set
 sapply(total, class) # to see current classes
 
 # select cols to keep and remove duplicates
 # COME BACK TO LATER TO KEEP MORE COLS- will be useful for model
 dat2020 <- total %>% 
-  select(Title, Year, rating, description) %>% 
+  select(Title, Year, Rating, Description) %>% 
   distinct(Title, .keep_all = TRUE)
 names(dat2020)
 
@@ -64,9 +65,6 @@ dat2020 <- dat2020 %>%
 
 sapply(dat2020, class) # to see current classes
 dat2020 <- na.omit(dat2020) #remove films missing description
-
-
-
 ```
 
 ## Structural Topic Model
@@ -98,7 +96,7 @@ corp_dfm <- dfm(corp1,
   
 # make corpus from scraped 2020 imdb data
 corp_2020 <- corpus(dat2020, 
-       text_field = "description",
+       text_field = "Description",
        docid_field = "Title")
 
 docvars(corp_2020, "Title") <- dat2020$Title ## Add back Title
