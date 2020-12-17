@@ -19,7 +19,7 @@ library(openxlsx)
 
 ## Kaggle Data
 
-```{r}
+```{r data preparation}
 dat<-read.csv("imdb_1972-2019.csv")
 
 # Exploring the dataset
@@ -68,7 +68,7 @@ dat2020 <- na.omit(dat_test) #remove films with missing information in either co
 ## Structural Topic Model
 
 
-```{r}
+```{r Initialize Corpus and dfm objects}
 # initialize corpus and dfm objects
 
 # Turn kaggle data into corpus
@@ -110,19 +110,26 @@ corp_2020_dfm <- dfm(corp_2020,
 
 ```
 
-```{r}
-# STM
-
+```{r Structural Topic Model}
 # build topic model from kaggle data
 corp_dfm_stm <- asSTMCorpus(corp_dfm)
-mod <- stm(documents = corp_dfm_stm$documents, vocab = corp_dfm_stm$vocab,
-           K = 10, data = corp_dfm_stm$data,
+mod <- stm(documents = corp_dfm_stm$documents, 
+           vocab = corp_dfm_stm$vocab,
+           K = 10, 
+           data = corp_dfm_stm$data,
            seed = 12345)
 
+# Descriptive 
 summary(mod) # shows highest probability, Lift and FREX words and score
 # FREX weights words by their overall frequency and how exclusive they are to the topic.
 # Lift weights words by dividing by their frequency in other topics, therefore giving higher weight to words that appear less frequently in other topics.
 # Similar to lift, score divides the log frequency of the word in the topic by the log frequency of the word in other topics.
+plot(mod, type = "summary", text.cex = 1) # shows highest probability words in each topic
+plot(mod,
+     type = "perspectives",
+     topics = c(4, 5),
+     main = "Putting two different topics in perspective")
+# The size of the words is again relative to their frequency (within the combination of the two topics). The x-axis shows the dregree that specific words align with Topic 4 or Topic 5. 
 plot(topicCorr(mod))
 
 topicQuality(mod, documents = corp_dfm_stm$documents)
@@ -156,3 +163,11 @@ plot(ca(thetas))
 
 ```
 
+```{r}
+
+stm1effect <- estimateEffect(formula = 1:10 ~ Rating,
+              stmobj = mod,
+              metadata = corp_dfm_stm$data)
+summary(stm1effect)
+
+``` 
