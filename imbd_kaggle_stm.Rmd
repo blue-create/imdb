@@ -15,6 +15,8 @@ require(quanteda)
 require(quanteda.corpora)
 library(igraph)# NOTE: You might need to install this
 library(openxlsx)
+library(data.table)
+
 ```
 
 ## Kaggle Data
@@ -26,8 +28,9 @@ dat<-read.csv("imdb_1972-2019.csv")
 names(dat)
 
 # Selecting the variables we are going to use and remove duplicates
+# remove year and genre - we won't use them in our model
 dat1 <- dat %>% 
-  select(Title, Year, Rating, Metascore, Description, Genre, Runtime..Minutes., Revenue..Millions.) %>% 
+  select(Title, Rating, Metascore, Description, Runtime..Minutes., Revenue..Millions.) %>% 
   distinct(Title, .keep_all = TRUE)
 names(dat1)
 
@@ -35,7 +38,7 @@ names(dat1)
 dat %>% filter(duplicated(.[["Title"]]))
 dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
-# convert factors to character columns
+# convert factors to character columns # remove 
 dat2 <- dat1 %>%
   mutate_if(is.factor, as.character)
 
@@ -72,22 +75,22 @@ dat2020 <- na.omit(dat_test) #remove films with missing information in either co
 # initialize corpus and dfm objects
 
 # Turn kaggle data into corpus
-corp1 <- corpus(dat2, 
+corp_kaggle <- corpus(dat2, 
        text_field = "Description",
        docid_field = "Title")
 
-docvars(corp1, "Title") <- dat1$Title ## Add back Title
+docvars(corp_kaggle, "Title") <- dat1$Title ## Add back Title
 
 # Create a document-feature matrix to enable text analysis
 #With no word limits we get 15.003 columns (so possible variables)
-corp_dfm <- dfm(corp1, 
+corp_dfm <- dfm(corp_kaggle, 
                 remove_punct = TRUE, 
                 remove_numbers = TRUE,
                 remove_symbol = TRUE, 
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
-                remove = stopwords("en")) #%>%
-  #dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
+                remove = stopwords("en")) %>%
+  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
   # only keeps top 5% of words - play around with (no doc limit)
 
 ######### Scraped Data ################
@@ -110,20 +113,28 @@ corp_2020_dfm <- dfm(corp_2020,
 
 ```
 
-```{r Structural Topic Model}
+```{r Structural Topic Model Pt. 1 - build and save, eval = FALSE}
 # build topic model from kaggle data
+# called "mod_demo" here so that this version does not save
 corp_dfm_stm <- asSTMCorpus(corp_dfm)
-mod <- stm(documents = corp_dfm_stm$documents, 
+mod_demo <- stm(documents = corp_dfm_stm$documents, 
            vocab = corp_dfm_stm$vocab,
            K = 10, 
            data = corp_dfm_stm$data,
            seed = 12345)
+
+#saveRDS(mod, file = "topic_mod.rds")
+```
+
+```{r Structural Topic Model Pt. 2 - import and continue}
+mod <- readRDS("topic_mod.rds")
 
 # Descriptive 
 summary(mod) # shows highest probability, Lift and FREX words and score
 # FREX weights words by their overall frequency and how exclusive they are to the topic.
 # Lift weights words by dividing by their frequency in other topics, therefore giving higher weight to words that appear less frequently in other topics.
 # Similar to lift, score divides the log frequency of the word in the topic by the log frequency of the word in other topics.
+
 plot(mod, type = "summary", text.cex = 1) # shows highest probability words in each topic
 plot(mod,
      type = "perspectives",
@@ -142,7 +153,14 @@ labels <- apply(sageLabels(mod)$marginal$frex, 1,
                 function(x){ paste(x[1:4], collapse = "-") })
                 # takes FREX words and concatenates them 
 
-# make dfm into STM corpus
+thetas_kaggle <- data.frame(mod$theta)
+colnames(thetas_kaggle) <- labels
+rownames(thetas_kaggle) <- paste(docvars(corp_dfm)$Title)
+
+
+
+######## Scraped Data ###########
+# make 2020 dfm into STM corpus
 new_docs <- asSTMCorpus(corp_2020_dfm) ## This is where films are dropped if na.omit not run (above)
 
 # apply old topic model
@@ -152,17 +170,44 @@ new_stm <- alignCorpus(new_docs,
 nds <- fitNewDocuments(mod, documents = new_stm$documents,
                 newData = new_stm$data)
 
-thetas <- data.frame(nds$theta)
-colnames(thetas) <- labels
-rownames(thetas) <- paste(docvars(corp_2020_dfm)$Title)
+thetas_2020 <- data.frame(nds$theta)
+colnames(thetas_2020) <- labels
+rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 
 # next step: link this spreadsheet (thetas by topic) to 2020 film data to create model
 
+
 #probably not useful but cute!
 library(ca)
-plot(ca(thetas))
+plot(ca(thetas_kaggle))
 
 ```
+
+```{r combine thetas into full datasets}
+# add topic scores into kaggle data
+thetas_kaggle <- setDT(thetas_kaggle, keep.rownames = TRUE)
+names(thetas_kaggle)[1] <- "Title" 
+dat_kaggle <- left_join(dat2, thetas_kaggle, by = "Title")
+dat_kaggle <- select(dat_kaggle, -c(Title, Description, Year, Genre, Metascore)) # won't use for model
+
+# add topic scores into 2020 data
+thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
+names(thetas_2020)[1] <- "Title" 
+dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
+```
+
+```{r}
+# test linear model 
+lin_mod <- lm(Rating ~ ., data = dat_kaggle)
+summary(lin_mod)
+# this shows that only runtime and revenue have a positive correlation with the Rating as a simple linear model. Actually, so does "story-true-drama-based"
+
+# let's look at interaction effects with revenue
+lin_mod_rev <- lm(Rating ~ Revenue..Millions.*., data = dat_kaggle)
+summary(lin_mod_int)
+```
+
+
 
 ```{r does not work}
 
