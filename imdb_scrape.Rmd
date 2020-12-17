@@ -166,6 +166,9 @@ metadat <- meta %>%
   select(profit, runtime) %>% 
   rename(Runtime..Minutes. = runtime,
          Revenue..Millions. = profit)
+
+metadat$Revenue..Millions. <- as.numeric(as.factor(metadat$Revenue..Millions.))
+metadat$Runtime..Minutes. <- as.integer(metadat$Runtime..Minutes.)
 ```
 
 
@@ -192,6 +195,8 @@ titles$Year <- titles$Year %>%
   gsub("\\)", "", .) %>% 
   gsub("[A-Za-z]", "", .) %>% 
   gsub("\\s+", "", .)
+
+titles$Year <- as.integer(titles$Year)
 ```
 
 ```{r rating and metascore}
@@ -219,6 +224,9 @@ rat$Metascore <- str_extract(rat$x, "[[:punct:]]+\\s[[:punct:]][[:digit:]]*")
 # Cleaning
 rat$Metascore <- gsub('[[:punct:] ]+',' ', rat$Metascore)
 rat$Metascore[rat$Metascore == " "] <- NA
+rat$Metascore <- as.numeric(rat$Metascore)
+
+
 rating <- rat %>% select(Rating, Metascore)
 ```
 

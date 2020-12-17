@@ -14,6 +14,7 @@ library(stm) # NOTE: You might need to install this
 require(quanteda)
 require(quanteda.corpora)
 library(igraph)# NOTE: You might need to install this
+library(openxlsx)
 ```
 
 ## Kaggle Data
@@ -30,7 +31,7 @@ dat1 <- dat %>%
   distinct(Title, .keep_all = TRUE)
 names(dat1)
 
-# If you want to look at the duplicates 
+# Look at duplicates 
 dat %>% filter(duplicated(.[["Title"]]))
 dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
@@ -48,16 +49,12 @@ total<-read.xlsx("scraped_data.xlsx")
 names(total) # this needs to pull from the scrapped data set
 sapply(total, class) # to see current classes
 
-# select cols to keep and remove duplicates
-# COME BACK TO LATER TO KEEP MORE COLS- will be useful for model
+# Adjust test dataset to training dataset
 dat2020 <- total %>% 
-  select(Title, Year, Rating, Description) %>% 
-  distinct(Title, .keep_all = TRUE)
+  select(Title, Year, Rating, Metascore, Description, Genres, Runtime..Minutes., Revenue..Millions.) %>% 
+  distinct(Title, .keep_all = TRUE) %>% 
+  rename(Genre = Genres)
 names(dat2020)
-
-# If you want to look at the duplicates 
-total %>% filter(duplicated(.[["Title"]]))
-dat2020 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
 # convert factors to character columns  ### come back to - shouldn't apply factorization to rating or year
 dat2020 <- dat2020 %>%
