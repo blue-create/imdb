@@ -138,8 +138,9 @@ topicQuality(mod, documents = corp_dfm_stm$documents)
 dim(mod$beta$logbeta[[1]])
 
 # name the topics
-labels <- apply(sageLabels(mod)$marginal$frex, 1, # takes FREX words and concatenates them 
+labels <- apply(sageLabels(mod)$marginal$frex, 1, 
                 function(x){ paste(x[1:4], collapse = "-") })
+                # takes FREX words and concatenates them 
 
 # make dfm into STM corpus
 new_docs <- asSTMCorpus(corp_2020_dfm) ## This is where films are dropped if na.omit not run (above)
@@ -163,11 +164,34 @@ plot(ca(thetas))
 
 ```
 
-```{r}
+```{r does not work}
 
 stm1effect <- estimateEffect(formula = 1:10 ~ Rating,
               stmobj = mod,
               metadata = corp_dfm_stm$data)
 summary(stm1effect)
 
+
+# apply topic model
+old_stm <- alignCorpus(corp_dfm_stm,
+                       old.vocab = corp_dfm_stm$vocab)
+
+nods <- fitNewDocuments(mod, documents = old_stm$documents,
+                newData = old_stm$data)
+
+thetas <- data.frame(nods$theta)
+colnames(thetas) <- labels
+rownames(thetas) <- paste(docvars(corp_dfm)$Title)
+
+# Attach thetas to df - doesn't make sense 
+dat3 <- cbind(dat2, thetas)
+dat3 <- select(dat3, -c(Title, Description, Genre))
+
+# Model 
+mood <- lm(Rating ~ ., data = dat3)
+summary(mood)
+predict(mood, dat3)
+
+# Test on new data
+prediction <- predict(mood, dat2020) # cannot work because categories don't exist
 ``` 
