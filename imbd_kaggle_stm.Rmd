@@ -46,22 +46,23 @@ sapply(dat2, class) # to see current classes
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
 total<-read.xlsx("scraped_data.xlsx")
-names(total) # this needs to pull from the scrapped data set
 sapply(total, class) # to see current classes
 
 # Adjust test dataset to training dataset
-dat2020 <- total %>% 
+dat_test <- total %>% 
   select(Title, Year, Rating, Metascore, Description, Genres, Runtime..Minutes., Revenue..Millions.) %>% 
   distinct(Title, .keep_all = TRUE) %>% 
   rename(Genre = Genres)
-names(dat2020)
+names(dat_test)
 
-# convert factors to character columns  ### come back to - shouldn't apply factorization to rating or year
-dat2020 <- dat2020 %>%
-  mutate_if(is.factor, as.character)
+# Convert numeric to integer 
+colsnum <- c("Year", "Runtime..Minutes.")
+dat_test[colsnum] <- sapply(dat_test[colsnum],as.integer)
 
-sapply(dat2020, class) # to see current classes
-dat2020 <- na.omit(dat2020) #remove films missing description
+# Check conformity 
+ifelse(sapply(dat2, class) == sapply(dat_test, class), 1, 0) # if TRUE, return 1; if FALSE, return 0
+
+dat2020 <- na.omit(dat_test) #remove films with missing information in either columns
 ```
 
 ## Structural Topic Model
@@ -110,7 +111,7 @@ corp_2020_dfm <- dfm(corp_2020,
 ```
 
 ```{r}
-#STM
+# STM
 
 # build topic model from kaggle data
 corp_dfm_stm <- asSTMCorpus(corp_dfm)
@@ -118,13 +119,19 @@ mod <- stm(documents = corp_dfm_stm$documents, vocab = corp_dfm_stm$vocab,
            K = 10, data = corp_dfm_stm$data,
            seed = 12345)
 
+summary(mod) # shows highest probability, Lift and FREX words and score
+# FREX weights words by their overall frequency and how exclusive they are to the topic.
+# Lift weights words by dividing by their frequency in other topics, therefore giving higher weight to words that appear less frequently in other topics.
+# Similar to lift, score divides the log frequency of the word in the topic by the log frequency of the word in other topics.
 plot(topicCorr(mod))
 
 topicQuality(mod, documents = corp_dfm_stm$documents)
+# Semantic coherence measures whether the words in a topic tend to co-occur together.
+# Exclusivity measures the extent to which the top words for this topic are do not appear as top words in other topics -- i.e., the extent to which its top words are 'exclusive.'
 dim(mod$beta$logbeta[[1]])
 
 # name the topics
-labels <- apply(sageLabels(mod)$marginal$frex, 1,
+labels <- apply(sageLabels(mod)$marginal$frex, 1, # takes FREX words and concatenates them 
                 function(x){ paste(x[1:4], collapse = "-") })
 
 # make dfm into STM corpus
