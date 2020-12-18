@@ -3,6 +3,7 @@ title: "imdb_kaggle"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
 library(dplyr)
 library(quanteda)
@@ -58,8 +59,6 @@ kaggle1 <- kaggle %>%
   rename(rating=avg_vote) %>%
   rename(budget=usa_gross_income) %>%
   distinct(title, .keep_all = TRUE)
-
-
 
 #Keep the first country
 kaggle1$country<-gsub("(.*),.*", "\\1",kaggle1$country)
@@ -120,9 +119,8 @@ corp_dfm <- dfm(corp_kaggle,
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
                 remove = stopwords("en"))%>%
-dfm_trim(min_termfreq = 1, termfreq_type = "quantile")
-  # only keeps top 5% of words - play around with (no doc limit)
-#doesn´t work with smaller that 1, as the document is too big
+dfm_trim(min_termfreq = 0.9, termfreq_type = "quantile")
+  # only keeps top 5% of words
 
 ######### Scraped Data ################
   
@@ -188,8 +186,6 @@ labels <- apply(sageLabels(mod)$marginal$frex, 1,
 thetas_kaggle <- data.frame(mod$theta)
 colnames(thetas_kaggle) <- labels
 rownames(thetas_kaggle) <- paste(docvars(corp_dfm)$Title)
-
-
 
 ######## Scraped Data ###########
 # make 2020 dfm into STM corpus

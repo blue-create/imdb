@@ -1,0 +1,30 @@
+---
+title: "Have you seen any good films lately?"
+author: "Anabel Berjón Sánchez   Ba Linh Le   Adina Spertus-Melhus"
+date: "18/12/2020"
+output:
+  html_document:
+    theme: cosmo
+    toc: yes
+    toc_float:
+      collapsed: false
+---
+
+# Using IMDb data to predict movie quality 
+
+This Data Analysis proposes a model to predict 2020 IMDb film qualities by looking at their description. By studying text description in IMDb movies from past years, we have been able to construct a topic model that predicts the rating of 2020 movies. We have find that…(include the results)
+<br>
+<br>
+<br>
+
+Winter comes with more and longer lockdowns. It is Friday night; you don´t know what to watch as you’ve already seen everything on Netflix in the past 8 months since the pandemic started. You feel like it is time to choose a good movie, but how? For our project, we propose using IMDb data to help address the challenge film quality prediction. For lack of a better metric, we will rely on a film’s user-submitted ratings (0-10 stars) to represent how “good” it is.  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# 1. Data 
+## 1.1 Scrape Data
+## 2.2 Kaggle Data
+# 2. Topic Model
+# 3. Results 
