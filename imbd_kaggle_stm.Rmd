@@ -43,8 +43,22 @@ dat2 <- dat1 %>%
   mutate_if(is.factor, as.character)
 
 sapply(dat2, class) # to see current classes
+###################################
+#Kaggle Data 2
+kaggle<-read.csv("data/IMDb_movies.csv")
 
+# Exploring the dataset
+names(kaggle)
 
+# Selecting the variables we are going to use and remove duplicates
+kaggle1 <- kaggle %>%
+  select(title,year,country,avg_vote,metascore,votes,description,budget) %>% 
+  rename(rating=avg_vote) %>% 
+  distinct(title, .keep_all = TRUE)
+names(kaggle1)
+
+#checking what is rating
+kaggle_rating<-read.csv("data/IMDb_ratings.csv")
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
