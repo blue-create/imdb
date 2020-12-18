@@ -163,9 +163,10 @@ meta[which(grepl("Edit", meta$runtime)), 5] <- NA
 meta[32, 4] <- "See-Saw Films, British Film Institute (BFI), BBC Films"
 
 metadat <- meta %>% 
-  select(profit, runtime) %>% 
+  select(profit, runtime, country) %>% 
   rename(Runtime..Minutes. = runtime,
-         Revenue..Millions. = profit)
+         Revenue..Millions. = profit,
+         Country = country)
 
 metadat$Revenue..Millions. <- as.numeric(as.factor(metadat$Revenue..Millions.))
 metadat$Runtime..Minutes. <- as.integer(metadat$Runtime..Minutes.)
