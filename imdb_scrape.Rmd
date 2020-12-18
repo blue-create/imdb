@@ -292,9 +292,11 @@ vote <- vot %>%
 ```
 
 
-``` {r final, eval = FALSE}
-# We are including this to show how we reached this point, but it should not be run
+``` {r final}
+# We are including this to show how we reached this point, but it is just a demo verison
+# later sections of the project will use a version we have saved
+
 # Combine df 
-# total <- cbind(titles, rating, vote, description, metadat, crew)
-# write.xlsx(total, 'scraped_data.xlsx')
+total_demo <- cbind(titles, rating, vote, description, metadat, crew)
+write.xlsx(total_demo, 'data/scraped_data.xlsx')
 ```

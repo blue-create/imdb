@@ -22,7 +22,7 @@ library(data.table)
 ## Kaggle Data
 
 ```{r data preparation}
-dat<-read.csv("imdb_1972-2019.csv")
+dat<-read.csv("data/imdb_1972-2019.csv")
 
 # Exploring the dataset
 names(dat)
@@ -48,7 +48,7 @@ sapply(dat2, class) # to see current classes
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
-total<-read.xlsx("scraped_data.xlsx")
+total<-read.xlsx("data/scraped_data.xlsx")
 sapply(total, class) # to see current classes
 
 # Adjust test dataset to training dataset
@@ -113,9 +113,9 @@ corp_2020_dfm <- dfm(corp_2020,
 
 ```
 
-```{r Structural Topic Model Pt. 1 - build and save, eval = FALSE}
+```{r Structural Topic Model Pt. 1 - build and save}
 # build topic model from kaggle data
-# called "mod_demo" here so that this version does not save
+# called "mod_demo" to show how we got to this point, but "mod" will be used from here on
 corp_dfm_stm <- asSTMCorpus(corp_dfm)
 mod_demo <- stm(documents = corp_dfm_stm$documents, 
            vocab = corp_dfm_stm$vocab,
@@ -123,11 +123,12 @@ mod_demo <- stm(documents = corp_dfm_stm$documents,
            data = corp_dfm_stm$data,
            seed = 12345)
 
-#saveRDS(mod, file = "topic_mod.rds")
+saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
 ```
 
 ```{r Structural Topic Model Pt. 2 - import and continue}
-mod <- readRDS("topic_mod.rds")
+mod <- readRDS("data/topic_mod.rds") # add data folder path
+#mod <- readRDS("data/topic_mod_demo.rds")
 
 # Descriptive 
 summary(mod) # shows highest probability, Lift and FREX words and score
@@ -141,7 +142,7 @@ plot(mod,
      topics = c(4, 5),
      main = "Putting two different topics in perspective")
 # The size of the words is again relative to their frequency (within the combination of the two topics). The x-axis shows the dregree that specific words align with Topic 4 or Topic 5. 
-plot(topicCorr(mod))
+#plot(topicCorr(mod)) # delete
 
 topicQuality(mod, documents = corp_dfm_stm$documents)
 # Semantic coherence measures whether the words in a topic tend to co-occur together.
@@ -179,7 +180,7 @@ rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 
 #probably not useful but cute!
 library(ca)
-plot(ca(thetas_kaggle))
+#plot(ca(thetas_kaggle))
 
 ```
 
