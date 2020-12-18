@@ -46,19 +46,31 @@ sapply(dat2, class) # to see current classes
 ###################################
 #Kaggle Data 2
 kaggle<-read.csv("data/IMDb_movies.csv")
+#checking what is rating
+kaggle_rating<-read.csv("data/IMDb_ratings.csv")
 
 # Exploring the dataset
 names(kaggle)
 
 # Selecting the variables we are going to use and remove duplicates
 kaggle1 <- kaggle %>%
-  select(title,year,country,avg_vote,metascore,votes,description,budget) %>% 
-  rename(rating=avg_vote) %>% 
+  select(title,country,avg_vote,metascore,votes,description,usa_gross_income,duration) %>% 
+  rename(rating=avg_vote) %>%
+  rename(budget=usa_gross_income) %>%
   distinct(title, .keep_all = TRUE)
-names(kaggle1)
 
-#checking what is rating
-kaggle_rating<-read.csv("data/IMDb_ratings.csv")
+
+
+#Keep the first country
+kaggle1$country<-gsub("(.*),.*", "\\1",kaggle1$country)
+
+names(kaggle1)
+# convert factors to character columns # remove 
+kaggle2 <- kaggle1 %>%
+  mutate_if(is.factor, as.character)
+
+sapply(kaggle2, class) # to see current classes
+
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
@@ -67,17 +79,21 @@ sapply(total, class) # to see current classes
 
 # Adjust test dataset to training dataset
 dat_test <- total %>% 
-  select(Title, Year, Rating, Metascore, Description, Genres, Runtime..Minutes., Revenue..Millions.) %>% 
+  select(Title,Country, Rating, Metascore, Votes,Description, Revenue..Millions.,Runtime..Minutes.) %>% 
   distinct(Title, .keep_all = TRUE) %>% 
-  rename(Genre = Genres)
+  rename(Budget = Revenue..Millions.)%>% 
+  rename(Duration = Runtime..Minutes.)
 names(dat_test)
 
+#keep the first country
+dat_test$Country<-gsub("(.*),.*", "\\1",dat_test$Country)
+
 # Convert numeric to integer 
-colsnum <- c("Year", "Runtime..Minutes.")
+colsnum <- c("Duration")
 dat_test[colsnum] <- sapply(dat_test[colsnum],as.integer)
 
 # Check conformity 
-ifelse(sapply(dat2, class) == sapply(dat_test, class), 1, 0) # if TRUE, return 1; if FALSE, return 0
+ifelse(sapply(kaggle2, class) == sapply(dat_test, class), 1, 0) # if TRUE, return 1; if FALSE, return 0
 
 dat2020 <- na.omit(dat_test) #remove films with missing information in either columns
 ```
@@ -89,11 +105,11 @@ dat2020 <- na.omit(dat_test) #remove films with missing information in either co
 # initialize corpus and dfm objects
 
 # Turn kaggle data into corpus
-corp_kaggle <- corpus(dat2, 
-       text_field = "Description",
-       docid_field = "Title")
+corp_kaggle <- corpus(kaggle2, 
+       text_field = "description",
+       docid_field = "title")
 
-docvars(corp_kaggle, "Title") <- dat1$Title ## Add back Title
+docvars(corp_kaggle, "title") <- kaggle1$title ## Add back Title
 
 # Create a document-feature matrix to enable text analysis
 #With no word limits we get 15.003 columns (so possible variables)
@@ -103,9 +119,10 @@ corp_dfm <- dfm(corp_kaggle,
                 remove_symbol = TRUE, 
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
-                remove = stopwords("en")) %>%
-  dfm_trim(min_termfreq = 0.8, termfreq_type = "quantile") 
+                remove = stopwords("en"))%>%
+dfm_trim(min_termfreq = 1, termfreq_type = "quantile")
   # only keeps top 5% of words - play around with (no doc limit)
+#doesn´t work with smaller that 1, as the document is too big
 
 ######### Scraped Data ################
   
