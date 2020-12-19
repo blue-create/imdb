@@ -23,7 +23,8 @@ library(data.table)
 ## Kaggle Data
 
 ```{r data preparation}
-dat<-read.csv("data/imdb_1972-2019.csv")
+# Kaggle Data 1 - Has Revenue but not Country
+dat <- read.csv("data/imdb_1972-2019.csv")
 
 # Exploring the dataset
 names(dat)
@@ -39,52 +40,67 @@ names(dat1)
 dat %>% filter(duplicated(.[["Title"]]))
 dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
-# convert factors to character columns # remove 
+# convert factors to character columns  
 dat2 <- dat1 %>%
   mutate_if(is.factor, as.character)
-
 sapply(dat2, class) # to see current classes
+
 ###################################
-#Kaggle Data 2
-kaggle<-read.csv("data/IMDb_movies.csv")
+
+#Kaggle Data 2 - Has Country but not Revenue (to complicated/lacking)
+kaggle <- read.csv("data/IMDb_movies.csv")
 #checking what is rating
-kaggle_rating<-read.csv("data/IMDb_ratings.csv")
+#kaggle_rating <- read.csv("data/IMDb_ratings.csv")
 
 # Exploring the dataset
 names(kaggle)
 
 # Selecting the variables we are going to use and remove duplicates
+# we can't use budget as a variable if we use Kaggle version 2
 kaggle1 <- kaggle %>%
-  select(title,country,avg_vote,metascore,votes,description,usa_gross_income,duration) %>% 
+  select(title, country, avg_vote, description, duration) %>% 
+#  select(title, country, avg_vote, metascore, votes, description, usa_gross_income, duration) %>% 
   rename(rating=avg_vote) %>%
-  rename(budget=usa_gross_income) %>%
-  distinct(title, .keep_all = TRUE)
-
-#Keep the first country
-kaggle1$country<-gsub("(.*),.*", "\\1",kaggle1$country)
+#  rename(budget=usa_gross_income) %>%
+  distinct(title, .keep_all = TRUE) # filter out any duplicates
 
 names(kaggle1)
-# convert factors to character columns # remove 
-kaggle2 <- kaggle1 %>%
-  mutate_if(is.factor, as.character)
 
-sapply(kaggle2, class) # to see current classes
+# Keep the first country
+kaggle1$country <- gsub("(.*),.*", "\\1", kaggle1$country)
+
+# convert factors to character columns  
+kaggle1 <- kaggle1 %>%
+  mutate_if(is.factor, as.character)
+sapply(kaggle1, class) # to see current classes
+
+library(naniar)
+
+kaggle1[nchar(kaggle1$description) < 35, ] <- NA # too short names will be removed in STM conversion
+kaggle1 <- kaggle1 %>%
+  replace_with_na(replace = list(description = "", country = "")) %>%
+  replace_with_na(replace = list(title = c("Drei Mann in einem Boot", # as will films w/ non-eng descrip
+                                           "Tízezer nap",
+                                           "Heintje - Einmal wird die Sonne wieder scheinen",
+                                           "Az elvarázsolt dollár",
+                                           "Szerelem elsö vérig")))
+kaggle2 <- na.omit(kaggle1)
 
 ###################################
 # recreate corpus initialization for scraped data (perhaps move to different script later)
 
-total<-read.xlsx("data/scraped_data.xlsx")
+total <- read.xlsx("data/scraped_data.xlsx")
 sapply(total, class) # to see current classes
 
 # Adjust test dataset to training dataset
 dat_test <- total %>% 
-  select(Title,Country, Rating, Metascore, Votes,Description, Revenue..Millions.,Runtime..Minutes.) %>% 
+  select(Title,Country, Rating, Metascore, Votes, Description, Revenue..Millions.,Runtime..Minutes.) %>% 
   distinct(Title, .keep_all = TRUE) %>% 
   rename(Budget = Revenue..Millions.)%>% 
   rename(Duration = Runtime..Minutes.)
 names(dat_test)
 
-#keep the first country
+# keep the first country
 dat_test$Country<-gsub("(.*),.*", "\\1",dat_test$Country)
 
 # Convert numeric to integer 
@@ -108,11 +124,11 @@ corp_kaggle <- corpus(kaggle2,
        text_field = "description",
        docid_field = "title")
 
-docvars(corp_kaggle, "title") <- kaggle1$title ## Add back Title
+docvars(corp_kaggle, "title") <- kaggle2$title ## Add back Title
 
 # Create a document-feature matrix to enable text analysis
 #With no word limits we get 15.003 columns (so possible variables)
-corp_dfm <- dfm(corp_kaggle, 
+corp_kaggle_dfm <- dfm(corp_kaggle, 
                 remove_punct = TRUE, 
                 remove_numbers = TRUE,
                 remove_symbol = TRUE, 
@@ -145,19 +161,20 @@ corp_2020_dfm <- dfm(corp_2020,
 ```{r Structural Topic Model Pt. 1 - build and save}
 # build topic model from kaggle data
 # called "mod_demo" to show how we got to this point, but "mod" will be used from here on
-corp_dfm_stm <- asSTMCorpus(corp_dfm)
-mod_demo <- stm(documents = corp_dfm_stm$documents, 
-           vocab = corp_dfm_stm$vocab,
+
+corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
+mod_demo <- stm(documents = corp_kaggle_stm$documents, 
+           vocab = corp_kaggle_stm$vocab,
            K = 10, 
-           data = corp_dfm_stm$data,
+           data = corp_kaggle_stm$data,
            seed = 12345)
 
-saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
+#saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
 ```
 
 ```{r Structural Topic Model Pt. 2 - import and continue}
-mod <- readRDS("data/topic_mod.rds") # add data folder path
-#mod <- readRDS("data/topic_mod_demo.rds")
+mod <- readRDS("data/topic_mod_v2.rds") 
+#mod <- mod_demo
 
 # Descriptive 
 summary(mod) # shows highest probability, Lift and FREX words and score
@@ -171,9 +188,8 @@ plot(mod,
      topics = c(4, 5),
      main = "Putting two different topics in perspective")
 # The size of the words is again relative to their frequency (within the combination of the two topics). The x-axis shows the dregree that specific words align with Topic 4 or Topic 5. 
-#plot(topicCorr(mod)) # delete
 
-topicQuality(mod, documents = corp_dfm_stm$documents)
+topicQuality(mod, documents = corp_kaggle_stm$documents)
 # Semantic coherence measures whether the words in a topic tend to co-occur together.
 # Exclusivity measures the extent to which the top words for this topic are do not appear as top words in other topics -- i.e., the extent to which its top words are 'exclusive.'
 dim(mod$beta$logbeta[[1]])
@@ -185,15 +201,17 @@ labels <- apply(sageLabels(mod)$marginal$frex, 1,
 
 thetas_kaggle <- data.frame(mod$theta)
 colnames(thetas_kaggle) <- labels
-rownames(thetas_kaggle) <- paste(docvars(corp_dfm)$Title)
+rownames(thetas_kaggle) <- paste(docvars(corp_kaggle_dfm)$title)
+```
 
+```{r}
 ######## Scraped Data ###########
 # make 2020 dfm into STM corpus
 new_docs <- asSTMCorpus(corp_2020_dfm) ## This is where films are dropped if na.omit not run (above)
 
 # apply old topic model
 new_stm <- alignCorpus(new_docs,
-                       old.vocab = corp_dfm_stm$vocab)
+                       old.vocab = corp_kaggle_stm$vocab)
 
 nds <- fitNewDocuments(mod, documents = new_stm$documents,
                 newData = new_stm$data)
@@ -214,9 +232,9 @@ library(ca)
 ```{r combine thetas into full datasets}
 # add topic scores into kaggle data
 thetas_kaggle <- setDT(thetas_kaggle, keep.rownames = TRUE)
-names(thetas_kaggle)[1] <- "Title" 
-dat_kaggle <- left_join(dat2, thetas_kaggle, by = "Title")
-dat_kaggle <- select(dat_kaggle, -c(Title, Description, Year, Genre, Metascore)) # won't use for model
+names(thetas_kaggle)[1] <- "title" 
+dat_kaggle <- left_join(kaggle2, thetas_kaggle, by = "title")
+dat_kaggle <- select(dat_kaggle, -c(title, description)) # won't use for model
 
 # add topic scores into 2020 data
 thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
@@ -225,14 +243,32 @@ dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 ```
 
 ```{r}
+########### KAGGLE DATA ###############
+########## START HERE #################
 # test linear model 
-lin_mod <- lm(Rating ~ ., data = dat_kaggle)
+#lin_mod <- lm(rating ~ ., data = dat_kaggle) # do not run this! 
+#lm_country <- lm(rating ~ factor(country), data = dat_kaggle)
+summary(lm_country)
+
+#lm_duration <- lm(rating ~ duration, data = dat_kaggle)
+summary(lm_duration)
+
+
+
+
 summary(lin_mod)
 # this shows that only runtime and revenue have a positive correlation with the Rating as a simple linear model. Actually, so does "story-true-drama-based"
 
+# let's look at interaction effects with country
+
+
+
 # let's look at interaction effects with revenue
-lin_mod_rev <- lm(Rating ~ Revenue..Millions.*., data = dat_kaggle)
-summary(lin_mod_int)
+# lin_mod_rev <- lm(Rating ~ Revenue..Millions.*., data = dat_kaggle)
+# summary(lin_mod_int)
+
+###### 2020 DATA ############
+
 ```
 
 
