@@ -16,7 +16,10 @@ require(quanteda.corpora)
 library(igraph)# NOTE: You might need to install this
 library(openxlsx)
 library(data.table)
-library(naniar) # might need to install
+library(naniar) #  NOTE: You might need to install this
+library(ca)
+library(plm) # NOTE: You might need to install this
+library(stargazer)
 theme_set(theme_minimal())
 ```
 
@@ -223,7 +226,6 @@ rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 
 
 #probably not useful but cute!
-library(ca)
 #plot(ca(thetas_kaggle))
 
 ```
@@ -246,34 +248,74 @@ dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 ########## START HERE #################
 
 dat_kaggle <- readRDS("data/dat_kaggle.rds") 
-dat_kaggle <- readRDS("data/dat_kaggle.rds") 
+#Change column names
+names(dat_kaggle)[4] <- "Topic_1"
+names(dat_kaggle)[5] <-"Topic_2"
+names(dat_kaggle)[6] <-"Topic_3"
+names(dat_kaggle)[7] <-"Topic_4"
+names(dat_kaggle)[8] <-"Topic_5"
+names(dat_kaggle)[9] <-"Topic_6"
+names(dat_kaggle)[10] <-"Topic_7"
+names(dat_kaggle)[11] <-"Topic_8"
+names(dat_kaggle)[12] <-"Topic_9"
+names(dat_kaggle)[13] <-"Topic_10"
 
+#First, we will perform Least Squares Dummy Variables (LSDV) estimation with lm(), where we essentially get an individual estimate for each unit. Second, we will run our model with plm(), which will do the same mechanics, yet it will not render each of the units intercept.
 
+str(dat_kaggle)
+#trasnforming country to categorical variablw
+dat_kaggle$country=as.factor(dat_kaggle$country)
 
-
-# test linear model 
+# test linear model: to test the linear model I would suggest selecting a few countries
 #lin_mod <- lm(rating ~ ., data = dat_kaggle) # do not run this! 
 #lm_country <- lm(rating ~ factor(country), data = dat_kaggle)
 summary(lm_country)
-
 #lm_duration <- lm(rating ~ duration, data = dat_kaggle)
 summary(lm_duration)
-
-
-
-
 summary(lin_mod)
+
 # this shows that only runtime and revenue have a positive correlation with the Rating as a simple linear model. Actually, so does "story-true-drama-based"
 
 # let's look at interaction effects with country
-
-
-
 # let's look at interaction effects with revenue
 # lin_mod_rev <- lm(Rating ~ Revenue..Millions.*., data = dat_kaggle)
 # summary(lin_mod_int)
 
+#USA
+#create new binary variable for USA
+dat_kaggle$USA<-NA
+dat_kaggle$USA[dat_kaggle$country=="USA"]<-1
+dat_kaggle$USA=="NA"<-0
+dat_kaggle$USA[is.na(dat_kaggle$USA)]<- 0
+usa_model <- lm(rating ~ USA + duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle)
+summary(usa_model)
+stargazer(usa_model, type="text")
+
+#PLM 
+unit_fe_kaggle <- plm(rating ~ duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle , index = c("country"), model = "within")
+stargazer(unit_fe_kaggle , type = "text")
+
 ###### 2020 DATA ############
+dat_2020 <- readRDS("data/dat_2020.rds")
+
+#Change column names
+names(dat_2020)[9] <- "Topic_1"
+names(dat_2020)[10] <-"Topic_2"
+names(dat_2020)[11] <-"Topic_3"
+names(dat_2020)[12] <-"Topic_4"
+names(dat_2020)[13] <-"Topic_5"
+names(dat_2020)[14] <-"Topic_6"
+names(dat_2020)[15] <-"Topic_7"
+names(dat_2020)[16] <-"Topic_8"
+names(dat_2020)[17] <-"Topic_9"
+names(dat_2020)[18] <-"Topic_10"
+
+str(dat_2020)
+#trasnforming country to categorical variable
+dat_2020$country=as.factor(dat_2020$country)
+
+unit_fe_2020<- plm(Rating ~ Duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_2020 , index = c("Country"), model = "within")
+stargazer(unit_fe_2020, type = "text")
 
 ```
 
