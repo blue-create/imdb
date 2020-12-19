@@ -10,14 +10,14 @@ library(quanteda)
 library(ggplot2)
 library(ggrepel)
 library(quanteda.textmodels)
-theme_set(theme_minimal())
 library(stm) # NOTE: You might need to install this
 require(quanteda)
 require(quanteda.corpora)
 library(igraph)# NOTE: You might need to install this
 library(openxlsx)
 library(data.table)
-
+library(naniar) # might need to install
+theme_set(theme_minimal())
 ```
 
 ## Kaggle Data
@@ -74,7 +74,6 @@ kaggle1 <- kaggle1 %>%
   mutate_if(is.factor, as.character)
 sapply(kaggle1, class) # to see current classes
 
-library(naniar)
 
 kaggle1[nchar(kaggle1$description) < 35, ] <- NA # too short names will be removed in STM conversion
 kaggle1 <- kaggle1 %>%
@@ -245,6 +244,13 @@ dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 ```{r}
 ########### KAGGLE DATA ###############
 ########## START HERE #################
+
+dat_kaggle <- readRDS("data/dat_kaggle.rds") 
+dat_kaggle <- readRDS("data/dat_kaggle.rds") 
+
+
+
+
 # test linear model 
 #lin_mod <- lm(rating ~ ., data = dat_kaggle) # do not run this! 
 #lm_country <- lm(rating ~ factor(country), data = dat_kaggle)
