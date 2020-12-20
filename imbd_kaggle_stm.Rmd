@@ -114,6 +114,8 @@ dat_test[colsnum] <- sapply(dat_test[colsnum],as.integer)
 ifelse(sapply(kaggle2, class) == sapply(dat_test, class), 1, 0) # if TRUE, return 1; if FALSE, return 0
 
 dat2020 <- na.omit(dat_test) #remove films with missing information in either columns
+
+dat2020$Country <- gsub("(.*),.*", "\\1", dat2020$Country) # doesn't work 
 ```
 
 ## Structural Topic Model
