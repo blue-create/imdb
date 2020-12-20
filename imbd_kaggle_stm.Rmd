@@ -40,7 +40,7 @@ dat1 <- dat %>%
 names(dat1)
 
 # Look at duplicates 
-dat %>% filter(duplicated(.[["Title"]]))
+#dat %>% filter(duplicated(.[["Title"]]))
 dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
 
 # convert factors to character columns  
@@ -51,6 +51,7 @@ sapply(dat2, class) # to see current classes
 ###################################
 
 #Kaggle Data 2 - Has Country but not Revenue (to complicated/lacking)
+# Note: Contains some 2020 films, but none of the ones we scraped
 kaggle <- read.csv("data/IMDb_movies.csv")
 #checking what is rating
 #kaggle_rating <- read.csv("data/IMDb_ratings.csv")
@@ -165,11 +166,11 @@ corp_2020_dfm <- dfm(corp_2020,
 # called "mod_demo" to show how we got to this point, but "mod" will be used from here on
 
 corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
-mod_demo <- stm(documents = corp_kaggle_stm$documents, 
-           vocab = corp_kaggle_stm$vocab,
-           K = 10, 
-           data = corp_kaggle_stm$data,
-           seed = 12345)
+# mod_demo <- stm(documents = corp_kaggle_stm$documents, 
+#            vocab = corp_kaggle_stm$vocab,
+#            K = 10, 
+#            data = corp_kaggle_stm$data,
+#            seed = 12345)
 
 #saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
 ```
@@ -243,7 +244,7 @@ names(thetas_2020)[1] <- "Title"
 dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 ```
 
-```{r}
+```{r, eval = FALSE}
 ########### KAGGLE DATA ###############
 ########## START HERE #################
 
@@ -326,11 +327,11 @@ summary(sweden_horror_model)
 stargazer(sweden_horror_model, type="text")
 
 
-# romance duration model
-long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
-summary(long_romance_model)
-stargazer(long_romance_model, type="text")
-# I think delete this one - not as interesting
+# # romance duration model
+# long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
+# summary(long_romance_model)
+# stargazer(long_romance_model, type="text")
+# # I think delete this one - not as interesting
 
 # romance country
 france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
@@ -391,7 +392,7 @@ stargazer(unit_fe_2020, type = "text")
 
 
 
-```{r does not work}
+```{r does not work, eval = FALSE}
 
 stm1effect <- estimateEffect(formula = 1:10 ~ Rating,
               stmobj = mod,
