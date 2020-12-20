@@ -10,46 +10,54 @@ library(quanteda)
 library(ggplot2)
 library(ggrepel)
 library(quanteda.textmodels)
-library(stm) # NOTE: You might need to install this
+library(stm) 
 require(quanteda)
 require(quanteda.corpora)
-library(igraph)# NOTE: You might need to install this
+library(igraph)
 library(openxlsx)
 library(data.table)
-library(naniar) #  NOTE: You might need to install this
+library(naniar) 
 library(ca)
-library(plm) # NOTE: You might need to install this
+library(plm) 
 library(stargazer)
 theme_set(theme_minimal())
 ```
 
-## Kaggle Data
+## Data preparation
 
-```{r data preparation}
+We might want to delete this data chunk because we didn't do stuff with it in the end.
+
+```{r data trial 1}
 # Kaggle Data 1 - Has Revenue but not Country
 dat <- read.csv("data/imdb_1972-2019.csv")
 
 # Exploring the dataset
 names(dat)
 
+# Look at duplicates 
+dat %>% filter(duplicated(.[["Title"]]))
+
 # Selecting the variables we are going to use and remove duplicates
 # remove year and genre - we won't use them in our model
 dat1 <- dat %>% 
-  select(Title, Rating, Metascore, Description, Runtime..Minutes., Revenue..Millions.) %>% 
+  select(Title, Rating, Metascore, Description, Runtime..Minutes.,
+         Revenue..Millions.) %>% 
   distinct(Title, .keep_all = TRUE)
 names(dat1)
 
-# Look at duplicates 
-#dat %>% filter(duplicated(.[["Title"]]))
-dat1 %>% filter(duplicated(.[["Title"]])) # to test that filter worked
+# Check for duplicates 
+dat1 %>% filter(duplicated(.[["Title"]])) 
 
 # convert factors to character columns  
 dat2 <- dat1 %>%
   mutate_if(is.factor, as.character)
-sapply(dat2, class) # to see current classes
 
-###################################
+# Check classes of columns
+sapply(dat2, class) 
 
+```
+
+``` {r kaggle data}
 #Kaggle Data 2 - Has Country but not Revenue (to complicated/lacking)
 # Note: Contains some 2020 films, but none of the ones we scraped
 kaggle <- read.csv("data/IMDb_movies.csv")
@@ -59,27 +67,31 @@ kaggle <- read.csv("data/IMDb_movies.csv")
 # Exploring the dataset
 names(kaggle)
 
-# Selecting the variables we are going to use and remove duplicates
-# we can't use budget as a variable if we use Kaggle version 2
+# Selecting variables and remove duplicates 
 kaggle1 <- kaggle %>%
   select(title, country, avg_vote, description, duration) %>% 
 #  select(title, country, avg_vote, metascore, votes, description, usa_gross_income, duration) %>% 
   rename(rating=avg_vote) %>%
-#  rename(budget=usa_gross_income) %>%
+#  rename(budget = usa_gross_income) %>%
   distinct(title, .keep_all = TRUE) # filter out any duplicates
 
 names(kaggle1)
 
-# Keep the first country
-kaggle1$country <- gsub("(.*),.*", "\\1", kaggle1$country)
+# Manage multiple and missing countries
+kaggle1$country <- gsub(",.*$", "\\1", kaggle1$country) # keep first country 
+kaggle1[which(kaggle1$country == ""),2] <-  NA # replace missing values with NA
 
 # convert factors to character columns  
 kaggle1 <- kaggle1 %>%
   mutate_if(is.factor, as.character)
-sapply(kaggle1, class) # to see current classes
 
+# Check column classes
+sapply(kaggle1, class)
 
-kaggle1[nchar(kaggle1$description) < 35, ] <- NA # too short names will be removed in STM conversion
+# Remove movies with short descriptions due to STM conversion
+kaggle1[nchar(kaggle1$description) < 35, ] <- NA
+
+# Convert empty and non-English descriptions to NA
 kaggle1 <- kaggle1 %>%
   replace_with_na(replace = list(description = "", country = "")) %>%
   replace_with_na(replace = list(title = c("Drei Mann in einem Boot", # as will films w/ non-eng descrip
@@ -87,61 +99,58 @@ kaggle1 <- kaggle1 %>%
                                            "Heintje - Einmal wird die Sonne wieder scheinen",
                                            "Az elvarázsolt dollár",
                                            "Szerelem elsö vérig")))
+
+# Remove movies with incomplete information
 kaggle2 <- na.omit(kaggle1)
 
-###################################
-# recreate corpus initialization for scraped data (perhaps move to different script later)
+```
 
+
+``` {r scraped data}
+# Import scraped data 
 total <- read.xlsx("data/scraped_data.xlsx")
-sapply(total, class) # to see current classes
+
+# Check column classes
+sapply(total, class)
 
 # Adjust test dataset to training dataset
 dat_test <- total %>% 
   select(Title,Country, Rating, Metascore, Votes, Description, Revenue..Millions.,Runtime..Minutes.) %>% 
-  distinct(Title, .keep_all = TRUE) %>% 
-  rename(Budget = Revenue..Millions.)%>% 
-  rename(Duration = Runtime..Minutes.)
+  rename(Budget = Revenue..Millions., Duration = Runtime..Minutes.)
 names(dat_test)
 
-# keep the first country
-dat_test$Country<-gsub("(.*),.*", "\\1",dat_test$Country)
+# Keep first country 
+dat_test$Country <- gsub(",.*$", "\\1", dat_test$Country)
 
 # Convert numeric to integer 
 colsnum <- c("Duration")
 dat_test[colsnum] <- sapply(dat_test[colsnum],as.integer)
 
-# Check conformity 
-ifelse(sapply(kaggle2, class) == sapply(dat_test, class), 1, 0) # if TRUE, return 1; if FALSE, return 0
-
-dat2020 <- na.omit(dat_test) #remove films with missing information in either columns
-
-dat2020$Country <- gsub("(.*),.*", "\\1", dat2020$Country) # doesn't work 
+# Remove movies with incomplete information 
+dat2020 <- na.omit(dat_test) 
 ```
 
 ## Structural Topic Model
 
-
 ```{r Initialize Corpus and dfm objects}
-# initialize corpus and dfm objects
-
 # Turn kaggle data into corpus
 corp_kaggle <- corpus(kaggle2, 
        text_field = "description",
        docid_field = "title")
 
-docvars(corp_kaggle, "title") <- kaggle2$title ## Add back Title
+# Add titles back
+docvars(corp_kaggle, "title") <- kaggle2$title 
 
 # Create a document-feature matrix to enable text analysis
-#With no word limits we get 15.003 columns (so possible variables)
+# Note: With no word limits we get 15.003 columns/possible variables
 corp_kaggle_dfm <- dfm(corp_kaggle, 
                 remove_punct = TRUE, 
                 remove_numbers = TRUE,
                 remove_symbol = TRUE, 
                 remove_separators = TRUE,
                 split_hyphens = TRUE,
-                remove = stopwords("en"))%>%
-dfm_trim(min_termfreq = 0.9, termfreq_type = "quantile")
-  # only keeps top 5% of words
+                remove = stopwords("en")) %>%
+  dfm_trim(min_termfreq = 0.9, termfreq_type = "quantile") # keep top 5% of words
 
 ######### Scraped Data ################
   
@@ -152,7 +161,7 @@ corp_2020 <- corpus(dat2020,
 
 docvars(corp_2020, "Title") <- dat2020$Title ## Add back Title
 
-# make scrapped corpus into dfm 
+# Turn corpus into dfm
 corp_2020_dfm <- dfm(corp_2020,
                 remove_punct = TRUE,
                 remove_symbols = TRUE,
@@ -160,12 +169,11 @@ corp_2020_dfm <- dfm(corp_2020,
                 split_hyphens = TRUE,
                 remove_numbers = TRUE,   
                 remove = stopwords("en")) 
-
 ```
 
 ```{r Structural Topic Model Pt. 1 - build and save}
-# build topic model from kaggle data
-# called "mod_demo" to show how we got to this point, but "mod" will be used from here on
+# Build topic model from kaggle data
+# "mod_demo" illustrates the process but "mod" will be used from here on
 
 corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
 # mod_demo <- stm(documents = corp_kaggle_stm$documents, 
@@ -174,50 +182,56 @@ corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
 #            data = corp_kaggle_stm$data,
 #            seed = 12345)
 
+# Save model 
 #saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
 ```
 
 ```{r Structural Topic Model Pt. 2 - import and continue}
+# Import model
 mod <- readRDS("data/topic_mod_v2.rds") 
 #mod <- mod_demo
 
 # Descriptive 
-summary(mod) # shows highest probability, Lift and FREX words and score
+summary(mod) 
 # FREX weights words by their overall frequency and how exclusive they are to the topic.
 # Lift weights words by dividing by their frequency in other topics, therefore giving higher weight to words that appear less frequently in other topics.
 # Similar to lift, score divides the log frequency of the word in the topic by the log frequency of the word in other topics.
 
-plot(mod, type = "summary", text.cex = 1) # shows highest probability words in each topic
+# Highest probability words in each topic
+plot(mod, type = "summary", text.cex = 1)
+
+# Compare different topic words
 plot(mod,
      type = "perspectives",
      topics = c(4, 5),
      main = "Putting two different topics in perspective")
-# The size of the words is again relative to their frequency (within the combination of the two topics). The x-axis shows the dregree that specific words align with Topic 4 or Topic 5. 
+# The size of the words is relative to their frequency (within the combination of the two topics). The x-axis shows the degree that specific words align with Topic 4 or Topic 5. 
 
 topicQuality(mod, documents = corp_kaggle_stm$documents)
 # Semantic coherence measures whether the words in a topic tend to co-occur together.
 # Exclusivity measures the extent to which the top words for this topic are do not appear as top words in other topics -- i.e., the extent to which its top words are 'exclusive.'
 dim(mod$beta$logbeta[[1]])
 
-# name the topics
+# Name the topics
 labels <- apply(sageLabels(mod)$marginal$frex, 1, 
                 function(x){ paste(x[1:4], collapse = "-") })
                 # takes FREX words and concatenates them 
 
+# Build df
 thetas_kaggle <- data.frame(mod$theta)
 colnames(thetas_kaggle) <- labels
 rownames(thetas_kaggle) <- paste(docvars(corp_kaggle_dfm)$title)
 ```
 
-```{r}
-######## Scraped Data ###########
-# make 2020 dfm into STM corpus
-new_docs <- asSTMCorpus(corp_2020_dfm) ## This is where films are dropped if na.omit not run (above)
+```{r apply topic model to scraped data}
+# Turn dfm into STM corpus
+new_docs <- asSTMCorpus(corp_2020_dfm)
 
-# apply old topic model
+# Apply old topic model
 new_stm <- alignCorpus(new_docs,
                        old.vocab = corp_kaggle_stm$vocab)
 
+# Predict thetas for scraped data based on kaggle model
 nds <- fitNewDocuments(mod, documents = new_stm$documents,
                 newData = new_stm$data)
 
@@ -225,22 +239,18 @@ thetas_2020 <- data.frame(nds$theta)
 colnames(thetas_2020) <- labels
 rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 
-# next step: link this spreadsheet (thetas by topic) to 2020 film data to create model
-
-
 #probably not useful but cute!
 #plot(ca(thetas_kaggle))
-
 ```
 
 ```{r combine thetas into full datasets}
-# add topic scores into kaggle data
+# Add topic scores into kaggle df
 thetas_kaggle <- setDT(thetas_kaggle, keep.rownames = TRUE)
 names(thetas_kaggle)[1] <- "title" 
 dat_kaggle <- left_join(kaggle2, thetas_kaggle, by = "title")
 dat_kaggle <- select(dat_kaggle, -c(title, description)) # won't use for model
 
-# add topic scores into 2020 data
+# Add topic scores into scraped data
 thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
 names(thetas_2020)[1] <- "Title" 
 dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
