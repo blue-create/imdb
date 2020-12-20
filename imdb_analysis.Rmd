@@ -35,12 +35,13 @@ names(dat_kaggle)[13] <-"Topic_10"
 #First, we will perform Least Squares Dummy Variables (LSDV) estimation with lm(), where we essentially get an individual estimate for each unit. Second, we will run our model with plm(), which will do the same mechanics, yet it will not render each of the units intercept.
 
 str(dat_kaggle)
-#trasnforming country to categorical variablw
+#trasnforming country to categorical variable
 dat_kaggle$country=as.factor(dat_kaggle$country)
 
-
-
-
+#Denmark
+dat_kaggle$Denmark<-NA 
+dat_kaggle$Denmark[dat_kaggle$country=="Denmark"]<-1
+dat_kaggle$Denmark[is.na(dat_kaggle$Denmark)]<- 0
 #USA
 dat_kaggle$USA<-NA 
 dat_kaggle$USA[dat_kaggle$country=="USA"]<-1
@@ -49,6 +50,10 @@ dat_kaggle$USA[is.na(dat_kaggle$USA)]<- 0
 dat_kaggle$India<-NA
 dat_kaggle$India[dat_kaggle$country=="India"]<-1
 dat_kaggle$India[is.na(dat_kaggle$India)]<- 0
+# Japan
+dat_kaggle$Japan<-NA
+dat_kaggle$Japan[dat_kaggle$country=="Japan"]<-1
+dat_kaggle$Japan[is.na(dat_kaggle$Japan)]<- 0
 # UK
 dat_kaggle$UK<-NA
 dat_kaggle$UK[dat_kaggle$country=="UK"]<-1
@@ -71,70 +76,131 @@ dat_kaggle$Sweden[dat_kaggle$country=="Sweden"]<-1
 dat_kaggle$Sweden[is.na(dat_kaggle$Sweden)]<- 0
 
 
-# country model
-country_model <- lm(rating ~ USA + India + UK + Canada + France, data = dat_kaggle)
-summary(country_model)
-stargazer(country_model, type="text")
-
 # topics model
 topics_only_model <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 + Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle)
 summary(topics_only_model)
-stargazer(topics_only_model, type="text")
+stargazer(topics_only_model,type = "text", out = "Table 1", 
+          title = "Topic Model: Which Topics have better rating?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
 
-# duration alone model
+# Country Model
+country_model <- lm(rating ~ USA + India + UK + Canada + France, data = dat_kaggle)
+summary(country_model)
+stargazer(country_model,type = "text", out = "Table 2", 
+          title = "Country Model: USA, India, UK, Canada and France", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+
+# Duration Model
 duration_model <- lm(rating ~ duration, data = dat_kaggle)
 summary(duration_model)
-stargazer(duration_model, type="text")
+stargazer(duration_model,type = "text", out = "Table 3", 
+          title = "Duration Model", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
 # longer films have higher ratings
 
-# who makes good horror? - effect is high but not significant
+# Horror Movies
 sk_horror_model <- lm(rating ~ SK*Topic_6, data = dat_kaggle)
 summary(sk_horror_model)
-stargazer(sk_horror_model, type="text") 
 
 sweden_horror_model <- lm(rating ~ Sweden*Topic_6, data = dat_kaggle)
 summary(sweden_horror_model)
-stargazer(sweden_horror_model, type="text")
 
+<<<<<<< Updated upstream
+=======
+japan_horror_model <- lm(rating ~ Japan*Topic_6, data = dat_kaggle)
+summary(japan_horror_model)
 
+<<<<<<< HEAD
+stargazer(sk_horror_model,sweden_horror_model,japan_horror_model,
+          type = "text", out = "Table 4", 
+          title = "Who Makes Better Horror Movies? South Korea vs.Sweden", 
+          omit.stat=c("LL","ser","f","adj.rsq"),
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in SK", "Rating in Sweden",
+                            "Rating in Japan"))
+# Japanese movies have better rating than SK and Sweden. But for horror movies the effect even decreases. also they don´t effect is high but not significant
+=======
+>>>>>>> Stashed changes
 # romance duration model
 long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
 summary(long_romance_model)
 stargazer(long_romance_model, type="text")
 # I think delete this one - not as interesting
+<<<<<<< Updated upstream
 
 # romance country
+=======
+>>>>>>> bc604a3f850c308de8960d080a6e6b347c77a714
+
+# Romance Movies
+>>>>>>> Stashed changes
 france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
 summary(france_romance_model)
-stargazer(france_romance_model, type="text")
-
 uk_romance_model <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
 summary(uk_romance_model)
-stargazer(uk_romance_model, type="text")
+
+stargazer(france_romance_model,uk_romance_model,
+          type = "text", out = "Table 5", 
+          title = "Who Makes Better Romance Movies? France vs.UK", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in France", "Rating in UK"))
 # a film from france will have a lower rating if it is a romance, 
 # but a film from the UK will have a better rating if it is a romance
 
+#Police Model
+denmark_crime_model <- lm(rating ~ Denmark*Topic_9, data = dat_kaggle)
+sweden_crime_model <- lm(rating ~ Sweden*Topic_9, data = dat_kaggle)
+stargazer(denmark_crime_model ,sweden_crime_model,
+          type = "text", out = "Table 6", 
+          title = "Who Makes Better Police Movies? Denmark vs.Sweden", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in Denmark", "Rating in Sweden"))
+#Denmark police movies have better movies than Sweden
+
 # USA model
 usa_crime_model <- lm(rating ~ USA*Topic_9, data = dat_kaggle)
+usa_fiction_model<- lm(rating ~ USA*Topic_1, data = dat_kaggle)
 summary(usa_crime_model)
-stargazer(usa_crime_model, type="text")
+summary(usa_fiction_model)
+stargazer(usa_crime_model,usa_fiction_model,
+          type = "text", out = "Table 7", 
+          title = "USA: Crime & Fiction Movies", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating of Crime Movies", "Rating of Finction Movies"))
 # USA-made killer-cop-gang-serial films seem to be better than
 # the average USA-made film
 
 # India duration interaction effect model
 india_len_model <- lm(rating ~ India*duration, data = dat_kaggle)
 summary(india_len_model)
-stargazer(india_len_model, type="text")
+stargazer(india_len_model,
+          type = "text", out = "Table 8", 
+          title = "India: Are Longer Movies better than other Movies?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
 # we know from above that indian films tend to have higher ratings
 # longer films have higher ratings
 # but when films are from india, a longer film has a lower rating
 
 
-
-
 #PLM 
 unit_fe_kaggle <- plm(rating ~ duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle , index = c("country"), model = "within")
-stargazer(unit_fe_kaggle , type = "text")
+stargazer(unit_fe_kaggle,
+          type = "text", out = "Table 9", 
+          title = "Overall Effect of Rating with each Topic accouting for country", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
 
 ###### 2020 DATA ############
 dat_2020 <- readRDS("data/dat_2020.rds")
