@@ -248,6 +248,7 @@ dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 ########## START HERE #################
 
 dat_kaggle <- readRDS("data/dat_kaggle.rds") 
+
 #Change column names
 names(dat_kaggle)[4] <- "Topic_1"
 names(dat_kaggle)[5] <-"Topic_2"
@@ -266,30 +267,99 @@ str(dat_kaggle)
 #trasnforming country to categorical variablw
 dat_kaggle$country=as.factor(dat_kaggle$country)
 
-# test linear model: to test the linear model I would suggest selecting a few countries
-#lin_mod <- lm(rating ~ ., data = dat_kaggle) # do not run this! 
-#lm_country <- lm(rating ~ factor(country), data = dat_kaggle)
-summary(lm_country)
-#lm_duration <- lm(rating ~ duration, data = dat_kaggle)
-summary(lm_duration)
-summary(lin_mod)
 
-# this shows that only runtime and revenue have a positive correlation with the Rating as a simple linear model. Actually, so does "story-true-drama-based"
 
-# let's look at interaction effects with country
-# let's look at interaction effects with revenue
-# lin_mod_rev <- lm(Rating ~ Revenue..Millions.*., data = dat_kaggle)
-# summary(lin_mod_int)
 
 #USA
-#create new binary variable for USA
-dat_kaggle$USA<-NA
+dat_kaggle$USA<-NA 
 dat_kaggle$USA[dat_kaggle$country=="USA"]<-1
-dat_kaggle$USA=="NA"<-0
 dat_kaggle$USA[is.na(dat_kaggle$USA)]<- 0
-usa_model <- lm(rating ~ USA + duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle)
-summary(usa_model)
-stargazer(usa_model, type="text")
+# India
+dat_kaggle$India<-NA
+dat_kaggle$India[dat_kaggle$country=="India"]<-1
+dat_kaggle$India[is.na(dat_kaggle$India)]<- 0
+# UK
+dat_kaggle$UK<-NA
+dat_kaggle$UK[dat_kaggle$country=="UK"]<-1
+dat_kaggle$UK[is.na(dat_kaggle$UK)]<- 0
+# Canada
+dat_kaggle$Canada<-NA
+dat_kaggle$Canada[dat_kaggle$country=="Canada"]<-1
+dat_kaggle$Canada[is.na(dat_kaggle$Canada)]<- 0
+# France
+dat_kaggle$France<-NA
+dat_kaggle$France[dat_kaggle$country=="France"]<-1
+dat_kaggle$France[is.na(dat_kaggle$France)]<- 0
+# South Korea
+dat_kaggle$SK<-NA
+dat_kaggle$SK[dat_kaggle$country=="South Korea"]<-1
+dat_kaggle$SK[is.na(dat_kaggle$SK)]<- 0
+# Sweden
+dat_kaggle$Sweden<-NA
+dat_kaggle$Sweden[dat_kaggle$country=="Sweden"]<-1
+dat_kaggle$Sweden[is.na(dat_kaggle$Sweden)]<- 0
+
+
+# country model
+country_model <- lm(rating ~ USA + India + UK + Canada + France, data = dat_kaggle)
+summary(country_model)
+stargazer(country_model, type="text")
+
+# topics model
+topics_only_model <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 + Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle)
+summary(topics_only_model)
+stargazer(topics_only_model, type="text")
+
+# duration alone model
+duration_model <- lm(rating ~ duration, data = dat_kaggle)
+summary(duration_model)
+stargazer(duration_model, type="text")
+# longer films have higher ratings
+
+# who makes good horror? - effect is high but not significant
+sk_horror_model <- lm(rating ~ SK*Topic_6, data = dat_kaggle)
+summary(sk_horror_model)
+stargazer(sk_horror_model, type="text") 
+
+sweden_horror_model <- lm(rating ~ Sweden*Topic_6, data = dat_kaggle)
+summary(sweden_horror_model)
+stargazer(sweden_horror_model, type="text")
+
+
+# romance duration model
+long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
+summary(long_romance_model)
+stargazer(long_romance_model, type="text")
+# I think delete this one - not as interesting
+
+# romance country
+france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
+summary(france_romance_model)
+stargazer(france_romance_model, type="text")
+
+uk_romance_model <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
+summary(uk_romance_model)
+5.79+stargazer(uk_romance_model, type="text")
+# a film from france will have a lower rating if it is a romance, 
+# but a film from the UK will have a better rating if it is a romance
+
+# USA model
+usa_crime_model <- lm(rating ~ USA*Topic_9, data = dat_kaggle)
+summary(usa_crime_model)
+stargazer(usa_crime_model, type="text")
+# USA-made killer-cop-gang-serial films seem to be better than
+# the average USA-made film
+
+# India duration interaction effect model
+india_len_model <- lm(rating ~ India*duration, data = dat_kaggle)
+summary(india_len_model)
+stargazer(india_len_model, type="text")
+# we know from above that indian films tend to have higher ratings
+# longer films have higher ratings
+# but when films are from india, a longer film has a lower rating
+
+
+
 
 #PLM 
 unit_fe_kaggle <- plm(rating ~ duration + Topic_1 + Topic_2 + Topic_3+ Topic_4+ Topic_5+ Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, data = dat_kaggle , index = c("country"), model = "within")
