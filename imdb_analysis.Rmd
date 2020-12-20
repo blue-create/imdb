@@ -97,11 +97,11 @@ summary(sweden_horror_model)
 stargazer(sweden_horror_model, type="text")
 
 
-# # romance duration model
-# long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
-# summary(long_romance_model)
-# stargazer(long_romance_model, type="text")
-# # I think delete this one - not as interesting
+# romance duration model
+long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
+summary(long_romance_model)
+stargazer(long_romance_model, type="text")
+# I think delete this one - not as interesting
 
 # romance country
 france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
