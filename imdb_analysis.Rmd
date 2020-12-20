@@ -111,12 +111,9 @@ summary(sk_horror_model)
 sweden_horror_model <- lm(rating ~ Sweden*Topic_6, data = dat_kaggle)
 summary(sweden_horror_model)
 
-<<<<<<< Updated upstream
-=======
 japan_horror_model <- lm(rating ~ Japan*Topic_6, data = dat_kaggle)
 summary(japan_horror_model)
 
-<<<<<<< HEAD
 stargazer(sk_horror_model,sweden_horror_model,japan_horror_model,
           type = "text", out = "Table 4", 
           title = "Who Makes Better Horror Movies? South Korea vs.Sweden", 
@@ -125,21 +122,10 @@ stargazer(sk_horror_model,sweden_horror_model,japan_horror_model,
           column.labels = c("Rating in SK", "Rating in Sweden",
                             "Rating in Japan"))
 # Japanese movies have better rating than SK and Sweden. But for horror movies the effect even decreases. also they don´t effect is high but not significant
-=======
->>>>>>> Stashed changes
-# romance duration model
-long_romance_model <- lm(rating ~ duration*Topic_7, data = dat_kaggle)
-summary(long_romance_model)
-stargazer(long_romance_model, type="text")
-# I think delete this one - not as interesting
-<<<<<<< Updated upstream
 
-# romance country
-=======
->>>>>>> bc604a3f850c308de8960d080a6e6b347c77a714
 
 # Romance Movies
->>>>>>> Stashed changes
+
 france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
 summary(france_romance_model)
 uk_romance_model <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
