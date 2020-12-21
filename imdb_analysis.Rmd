@@ -246,6 +246,7 @@ names(dat_2020)[18] <-"Topic_10"
 dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
+<<<<<<< Updated upstream
 ## Scraped Topics Model 
 ``` {r scraped topics model, warning = FALSE }
 # topics model using scraped data 
@@ -261,6 +262,68 @@ stargazer(topics_scraped_model,type = "text", out = "Table 1",
 # Note: For some reason, all topics are associated with negative ratings, but the intercept is quite high. Probably due to the moderate-to-low ratings of these movies.
 ```
 
+=======
+## Topic Model 
+```{r scraped plm, warning = FALSE}
+topics_model_2020 <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
+                      Topic_4 + Topic_5+  Topic_6 + Topic_7 + 
+                      Topic_8 + Topic_9 + Topic_10, data = dat_2020)
+summary(topics_model_2020)
+stargazer(topics_model_2020,type = "text", out = "Table 10", 
+          title = "Topic Model: Which Topics have better ratings in 2020?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+
+```
+
+## Duration Model 
+```{r duration model, warning = FALSE}
+# Duration Model
+duration_model_2020 <- lm(Rating ~ Duration, data = dat_2020)
+summary(duration_model_2020)
+stargazer(duration_model_2020,type = "text", out = "Table 11", 
+          title = "Duration Model for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"),
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+# Note: longer films have higher ratings
+```
+
+## Country Model 
+``` {r country model, warning = FALSE}
+
+sapply(dat_2020, class)
+# Transform country to categorical variable
+dat_2020$Country=as.character(dat_2020$Country)
+
+# Create country dummy variables
+# USA
+dat_2020$USA <- NA
+dat_2020$USA[dat_2020$Country=="USA"]<-1
+dat_2020$USA[is.na(dat_2020$USA)]<- 0
+# UK
+dat_2020$UK <- NA
+dat_2020$UK[dat_2020$Country=="UK"]<-1
+dat_2020$UK[is.na(dat_2020$UK)]<- 0
+# Canada
+dat_2020$Canada <- NA
+dat_2020$Canada[dat_2020$Country=="Canada"]<-1
+dat_2020$Canada[is.na(dat_2020$Canada)]<- 0
+
+# Country Model
+country_model_2020 <- lm(Rating ~ USA  + UK + Canada, data = dat_2020)
+summary(country_model_2020)
+stargazer(country_model_2020,type = "text", out = "Table 12", 
+          title = "Country Model: USA, UK, Canada", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+
+```
+
+
+>>>>>>> Stashed changes
 ## Panel Data Estimation
 ```{r scraped plm, warning = FALSE}
 # PLM

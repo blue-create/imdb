@@ -1,10 +1,15 @@
 
+<<<<<<< Updated upstream
 Overall Effect of Rating with each Topic accounting for country 2020 and Metascore
+=======
+Topic Model: Which Topics have better ratings in 2020?
+>>>>>>> Stashed changes
 ========================================
                  Dependent variable:    
              ---------------------------
                        Rating           
 ----------------------------------------
+<<<<<<< Updated upstream
 Metascore             0.047***          
                        (0.008)          
                                         
@@ -44,5 +49,43 @@ Constant               4.306*
 ----------------------------------------
 Observations             46             
 R2                      0.610           
+=======
+Topic_1                -4.261           
+                       (3.141)          
+                                        
+Topic_2                -4.091           
+                       (3.444)          
+                                        
+Topic_3                -7.822*          
+                       (4.466)          
+                                        
+Topic_4                -1.892           
+                       (3.909)          
+                                        
+Topic_5                -2.773           
+                       (3.815)          
+                                        
+Topic_6                -4.326           
+                       (3.364)          
+                                        
+Topic_7                -2.152           
+                       (4.130)          
+                                        
+Topic_8                -3.803           
+                       (3.648)          
+                                        
+Topic_9                -3.067           
+                       (3.653)          
+                                        
+Topic_10                                
+                                        
+                                        
+Constant              9.653***          
+                       (3.067)          
+                                        
+----------------------------------------
+Observations             46             
+R2                      0.175           
+>>>>>>> Stashed changes
 ========================================
 Note:        *p<0.1; **p<0.05; ***p<0.01
