@@ -32,7 +32,7 @@ names(kaggle)
 # Selecting variables and remove duplicates 
 kaggle1 <- kaggle %>%
   select(title, country, avg_vote, description, duration) %>% 
-  rename(rating=avg_vote) %>%
+  rename(rating = avg_vote) %>%
   distinct(title, .keep_all = TRUE) # filter out any duplicates
 names(kaggle1)
 
@@ -203,8 +203,8 @@ rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 # Add topic scores into kaggle df
 thetas_kaggle <- setDT(thetas_kaggle, keep.rownames = TRUE)
 names(thetas_kaggle)[1] <- "title" 
-dat_kaggle <- left_join(kaggle2, thetas_kaggle, by = "title")
-dat_kaggle <- select(dat_kaggle, -c(title, description)) # won't use for model
+dat_kaggle_titles <- left_join(kaggle2, thetas_kaggle, by = "title")
+dat_kaggle <- select(dat_kaggle_titles, -c(title, description)) # won't use for model
 
 # Add topic scores into scraped data
 thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
