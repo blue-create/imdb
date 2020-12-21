@@ -1,10 +1,10 @@
 ---
 title: "Analysis"
-output: html_document
+output: rmdformats::readthedown
 ---
 
 # Setup
-```{r setup, include=FALSE}
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(dplyr)
@@ -257,7 +257,6 @@ stargazer(topics_scraped_model,type = "text", out = "Table 1",
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
-# Note: For some reason, all topics are associated with negative ratings, but the intercept is quite high. Probably due to the moderate-to-low ratings of these movies.
 ```
 
 ## Duration Model 
