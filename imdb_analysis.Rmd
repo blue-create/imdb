@@ -276,7 +276,7 @@ stargazer(duration_model_2020,type = "text", out = "Table 11",
 ```{r}
 # UK
 dat_2020$UK <- NA
-dat_2020$UK[dat_2020$Country=="UK"]<-1
+dat_2020$UK[dat_2020$Country==" UK "]<-1
 dat_2020$UK[is.na(dat_2020$UK)]<- 0
 
 uk_romance_model_2020 <- lm(Rating ~ UK*Topic_7, data = dat_2020)
@@ -298,9 +298,14 @@ dat_2020$Country <- as.character(dat_2020$Country)
 dat_2020$Country <- str_trim(dat_2020$Country)
 
 # Create country dummy variables
+# USA
+dat_2020$USA <- NA
+dat_2020$USA[dat_2020$Country==" USA "]<-1
+dat_2020$USA[is.na(dat_2020$Canada)]<- 0
+
 # Canada
 dat_2020$Canada <- NA
-dat_2020$Canada[dat_2020$Country=="Canada"]<-1
+dat_2020$Canada[dat_2020$Country==" Canada "]<-1
 dat_2020$Canada[is.na(dat_2020$Canada)]<- 0
 
 # Country Model
