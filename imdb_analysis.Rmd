@@ -221,9 +221,6 @@ stargazer(unit_fe_kaggle,
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
-
-# Ba Linh: Am I the only one or is topic 10 also missing on your ends?
-
 ```
 # Scraped data analyses 
 
@@ -246,13 +243,13 @@ names(dat_2020)[17] <-"Topic_9"
 names(dat_2020)[18] <-"Topic_10"
 
 # Transform country to categorical variable
-dat_2020$country=as.factor(dat_2020$country)
+dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
 ## Panel Data Estimation
 ```{r plm, warning = FALSE}
 # PLM
-unit_fe_2020<- plm(Rating ~ Duration + Topic_1 + Topic_2 + 
+unit_fe_2020 <- plm(Rating ~ Duration + Topic_1 + Topic_2 + 
                 Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
                 Topic_7 + Topic_8 + Topic_9 + Topic_10, 
                 data = dat_2020 , index = c("Country"), 

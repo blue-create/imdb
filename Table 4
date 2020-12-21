@@ -6,26 +6,26 @@ Who Makes Better Horror Movies? South Korea vs.Sweden
                Rating in SK Rating in Sweden Rating in Japan
                    (1)            (2)              (3)      
 ------------------------------------------------------------
-SK               0.404***                                   
+SK               0.397***                                   
                  (0.052)                                    
                                                             
-Sweden                         -0.323***                    
-                                (0.065)                     
+Sweden                         -0.244***                    
+                                (0.062)                     
                                                             
-Japan                                           0.659***    
+Japan                                           0.654***    
                                                  (0.032)    
                                                             
-Topic_6         -1.007***      -1.008***        -0.987***   
+Topic_6         -1.007***      -1.006***        -0.987***   
                  (0.049)        (0.049)          (0.049)    
                                                             
-SK:Topic_6        0.678                                     
-                 (0.420)                                    
+SK:Topic_6        0.690*                                    
+                 (0.419)                                    
                                                             
-Sweden:Topic_6                   0.871                      
-                                (0.552)                     
+Sweden:Topic_6                   0.601                      
+                                (0.534)                     
                                                             
-Japan:Topic_6                                    -0.039     
-                                                 (0.260)    
+Japan:Topic_6                                    -0.029     
+                                                 (0.259)    
                                                             
 Constant         5.995***       6.004***        5.975***    
                  (0.006)        (0.006)          (0.006)    
