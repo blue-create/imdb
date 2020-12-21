@@ -8,11 +8,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 library(dplyr)
-library(ggplot2)
 library(data.table)
 library(plm) 
+library(stringr)
 library(stargazer)
-theme_set(theme_minimal())
 ```
 
 # Kaggle data analyses
@@ -208,19 +207,19 @@ stargazer(india_len_model,
 # Note: We have derived above that Indian films tend to have higher ratings and that longer films have higher ratings, but when films are from India, a longer film is accompanied by a lower rating.
 ```
 
-## Panel Data Estimation
-```{r plm, warning = FALSE}
-# PLM 
-unit_fe_kaggle <- plm(rating ~ duration + Topic_1 + Topic_2 + Topic_3 + 
+## Fixed Effect Model
+```{r fe, warning = FALSE}
+# Fixed effect model 
+unit_fe_kaggle <- lm(rating ~ as.factor(country) + Topic_1 + Topic_2 + Topic_3 + 
                     Topic_4 + Topic_5 + Topic_6 + Topic_7 + Topic_8 + 
-                    Topic_9 + Topic_10, data = dat_kaggle, 
-                    index = c("country"), model = "within")
+                    Topic_9 + Topic_10, data = dat_kaggle)
 stargazer(unit_fe_kaggle,
           type = "text", out = "Table 9", 
-          title = "Overall Effect of Rating with each Topic accounting for country", 
+          title = "Effect of Topic accounting for country", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
+# Note: Constant is quite moderate at 6.9, and the effects of each topic are all below 1 rating unit.
 ```
 # Scraped data analyses 
 
@@ -246,10 +245,9 @@ names(dat_2020)[18] <-"Topic_10"
 dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
-<<<<<<< Updated upstream
 ## Scraped Topics Model 
 ``` {r scraped topics model, warning = FALSE }
-# topics model using scraped data 
+# Topics model using scraped data 
 topics_scraped_model <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
                       Topic_4 + Topic_5 +  Topic_6 + Topic_7 + 
                       Topic_8 + Topic_9 + Topic_10, data = dat_2020)
@@ -262,23 +260,8 @@ stargazer(topics_scraped_model,type = "text", out = "Table 1",
 # Note: For some reason, all topics are associated with negative ratings, but the intercept is quite high. Probably due to the moderate-to-low ratings of these movies.
 ```
 
-=======
-## Topic Model 
-```{r scraped plm, warning = FALSE}
-topics_model_2020 <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
-                      Topic_4 + Topic_5+  Topic_6 + Topic_7 + 
-                      Topic_8 + Topic_9 + Topic_10, data = dat_2020)
-summary(topics_model_2020)
-stargazer(topics_model_2020,type = "text", out = "Table 10", 
-          title = "Topic Model: Which Topics have better ratings in 2020?", 
-          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
-          dep.var.labels.include = FALSE,
-          column.labels = c("Rating"))
-
-```
-
 ## Duration Model 
-```{r duration model, warning = FALSE}
+```{r scraped duration model, warning = FALSE}
 # Duration Model
 duration_model_2020 <- lm(Rating ~ Duration, data = dat_2020)
 summary(duration_model_2020)
@@ -291,11 +274,10 @@ stargazer(duration_model_2020,type = "text", out = "Table 11",
 ```
 
 ## Country Model 
-``` {r country model, warning = FALSE}
-
-sapply(dat_2020, class)
-# Transform country to categorical variable
-dat_2020$Country=as.character(dat_2020$Country)
+``` {r scraped country model, warning = FALSE}
+# Prepare country variable
+dat_2020$Country <- as.character(dat_2020$Country)
+dat_2020$Country <- str_trim(dat_2020$Country)
 
 # Create country dummy variables
 # USA
@@ -319,29 +301,27 @@ stargazer(country_model_2020,type = "text", out = "Table 12",
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
-
+# Note: Canadian and British movies seem to fare better than American movies.
 ```
 
-
->>>>>>> Stashed changes
-## Panel Data Estimation
-```{r scraped plm, warning = FALSE}
-# PLM
-unit_fe_2020 <- plm(Rating ~ Duration + Topic_1 + Topic_2 + 
+## Fixed Effect Model
+```{r scraped fe, warning = FALSE}
+# Fixed effect model
+unit_fe_2020 <- lm(Rating ~ Topic_1 + Topic_2 + 
                 Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
-                Topic_7 + Topic_8 + Topic_9 + Topic_10, 
-                data = dat_2020 , index = c("Country"), 
-                model = "within")
+                Topic_7 + Topic_8 + Topic_9 + Topic_10 +
+                as.factor(Country), data = dat_2020)
 stargazer(unit_fe_2020,
           type = "text", out = "Table 10", 
-          title = "Overall Effect of Rating with each Topic accounting for country 2020", 
+          title = "Effect of each Topic accounting for country 2020", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
+# Note: Overall rating is high at 8.7, but the other estimates are statistically insignificant. 
 ```
 ## Scraped Metascore Model 
 ```{r scraped metascore model, warning = FALSE}
-# metascore model using scraped data 
+# Metascore model using scraped data 
 metascore_model <- lm(Rating ~ Metascore + Topic_1 + Topic_2 + 
                 Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
                 Topic_7 + Topic_8 + Topic_9 + Topic_10, 
@@ -352,5 +332,5 @@ stargazer(metascore_model,
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
-# Note: Including Metascore as a covariate seems to reduce the negative association of the topics except for topic 7, which is now viewed to be worse.
+# Note: The Metascore seems to have a very marginal effect on Rating. The other estimates are statistically insignificant.
 ```
