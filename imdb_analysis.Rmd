@@ -315,29 +315,6 @@ stargazer(usa_crime_model_2020,usa_battle_model_2020,
 ```
 
 
-## Country Model 
-``` {r scraped country model, warning = FALSE}
-# Prepare country variable
-dat_2020$Country <- as.character(dat_2020$Country)
-dat_2020$Country <- str_trim(dat_2020$Country)
-
-# Create country dummy variables
-# Canada
-dat_2020$Canada <- NA
-dat_2020$Canada[dat_2020$Country=="Canada"]<-1
-dat_2020$Canada[is.na(dat_2020$Canada)]<- 0
-
-# Country Model
-country_model_2020 <- lm(Rating ~ USA  + UK + Canada, data = dat_2020)
-summary(country_model_2020)
-stargazer(country_model_2020,type = "text", out = "Table 13", 
-          title = "Country Model: USA, UK, Canada", 
-          omit.stat=c("LL","ser","f","adj.rsq"), 
-          dep.var.labels.include = FALSE,
-          column.labels = c("Rating"))
-# Note: Canadian and British movies seem to fare better than American movies.
-```
-
 ## Fixed Effect Model
 ```{r scraped fe, warning = FALSE}
 # Fixed effect model
