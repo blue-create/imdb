@@ -291,6 +291,29 @@ stargazer(uk_romance_model_2020,
           column.labels = c("Rating in UK"))
 ```
 
+## USA Model
+```{r USA mode, warning = FALSE}
+
+# USA
+dat_2020$USA <- NA
+dat_2020$USA[dat_2020$Country==" USA "]<-1
+dat_2020$USA[is.na(dat_2020$USA)]<- 0
+
+# USA model
+usa_crime_model_2020 <- lm(Rating ~ USA*Topic_9, data = dat_2020)
+usa_battle_model_2020 <- lm(Rating ~ USA*Topic_1, data = dat_2020)
+summary(usa_crime_model_2020)
+summary(usa_battle_model_2020)
+stargazer(usa_crime_model_2020,usa_battle_model_2020,
+          type = "text", out = "Table 13", 
+          title = "USA: Crime & Battle Movies for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating of Crime Movies", "Rating of Battle Movies"))
+# Note: USA-made killer-cop-gang-serial films seem to do  better than the average USA-made film.
+```
+
+
 ## Country Model 
 ``` {r scraped country model, warning = FALSE}
 # Prepare country variable
@@ -301,7 +324,7 @@ dat_2020$Country <- str_trim(dat_2020$Country)
 # USA
 dat_2020$USA <- NA
 dat_2020$USA[dat_2020$Country==" USA "]<-1
-dat_2020$USA[is.na(dat_2020$Canada)]<- 0
+dat_2020$USA[is.na(dat_2020$USA)]<- 0
 
 # Canada
 dat_2020$Canada <- NA
