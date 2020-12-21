@@ -246,6 +246,21 @@ names(dat_2020)[18] <-"Topic_10"
 dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
+## Scraped Topics Model 
+``` {r scraped topics model, warning = FALSE }
+# topics model using scraped data 
+topics_scraped_model <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
+                      Topic_4 + Topic_5 +  Topic_6 + Topic_7 + 
+                      Topic_8 + Topic_9 + Topic_10, data = dat_2020)
+summary(topics_scraped_model)
+stargazer(topics_scraped_model,type = "text", out = "Table 1", 
+          title = "Topic Model: Which Topics have better ratings?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+# Note: For some reason, all topics are associated with negative ratings, but the intercept is quite high. Probably due to the moderate-to-low ratings of these movies.
+```
+
 ## Panel Data Estimation
 ```{r scraped plm, warning = FALSE}
 # PLM
@@ -260,4 +275,19 @@ stargazer(unit_fe_2020,
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
           column.labels = c("Rating"))
+```
+## Scraped Metascore Model 
+```{r scraped metascore model, warning = FALSE}
+# metascore model using scraped data 
+metascore_model <- lm(Rating ~ Metascore + Topic_1 + Topic_2 + 
+                Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
+                Topic_7 + Topic_8 + Topic_9 + Topic_10, 
+                data = dat_2020)
+stargazer(metascore_model,
+          type = "text", out = "Table 10", 
+          title = "Overall Effect of Rating with each Topic accounting for country 2020 and Metascore", 
+          omit.stat=c("LL","ser","f","adj.rsq"),
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"))
+# Note: Including Metascore as a covariate seems to reduce the negative association of the topics except for topic 7, which is now viewed to be worse.
 ```

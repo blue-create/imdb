@@ -1148,6 +1148,94 @@ names(dat_2020)[18] &lt;-&quot;Topic_10&quot;
 # Transform country to categorical variable
 dat_2020$Country &lt;- as.factor(dat_2020$Country)</code></pre>
 </div>
+<div id="scraped-topics-model" class="section level2">
+<h2>Scraped Topics Model</h2>
+<pre class="r"><code># topics model using scraped data 
+topics_scraped_model &lt;- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
+                      Topic_4 + Topic_5 +  Topic_6 + Topic_7 + 
+                      Topic_8 + Topic_9 + Topic_10, data = dat_2020)
+summary(topics_scraped_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Rating ~ Topic_1 + Topic_2 + Topic_3 + Topic_4 + 
+##     Topic_5 + Topic_6 + Topic_7 + Topic_8 + Topic_9 + Topic_10, 
+##     data = dat_2020)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.31081 -0.53857  0.06335  0.63243  2.03228 
+## 
+## Coefficients: (1 not defined because of singularities)
+##             Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)    9.653      3.067   3.147   0.0033 **
+## Topic_1       -4.261      3.141  -1.357   0.1833   
+## Topic_2       -4.091      3.444  -1.188   0.2426   
+## Topic_3       -7.822      4.466  -1.751   0.0884 . 
+## Topic_4       -1.892      3.909  -0.484   0.6314   
+## Topic_5       -2.773      3.815  -0.727   0.4721   
+## Topic_6       -4.326      3.364  -1.286   0.2066   
+## Topic_7       -2.152      4.130  -0.521   0.6055   
+## Topic_8       -3.803      3.648  -1.043   0.3041   
+## Topic_9       -3.067      3.653  -0.840   0.4067   
+## Topic_10          NA         NA      NA       NA   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.003 on 36 degrees of freedom
+## Multiple R-squared:  0.1746, Adjusted R-squared:  -0.03174 
+## F-statistic: 0.8462 on 9 and 36 DF,  p-value: 0.5797</code></pre>
+<pre class="r"><code>stargazer(topics_scraped_model,type = &quot;text&quot;, out = &quot;Table 1&quot;, 
+          title = &quot;Topic Model: Which Topics have better ratings?&quot;, 
+          omit.stat=c(&quot;LL&quot;,&quot;ser&quot;,&quot;f&quot;,&quot;adj.rsq&quot;), 
+          dep.var.labels.include = FALSE,
+          column.labels = c(&quot;Rating&quot;))</code></pre>
+<pre><code>## 
+## Topic Model: Which Topics have better ratings?
+## ========================================
+##                  Dependent variable:    
+##              ---------------------------
+##                        Rating           
+## ----------------------------------------
+## Topic_1                -4.261           
+##                        (3.141)          
+##                                         
+## Topic_2                -4.091           
+##                        (3.444)          
+##                                         
+## Topic_3                -7.822*          
+##                        (4.466)          
+##                                         
+## Topic_4                -1.892           
+##                        (3.909)          
+##                                         
+## Topic_5                -2.773           
+##                        (3.815)          
+##                                         
+## Topic_6                -4.326           
+##                        (3.364)          
+##                                         
+## Topic_7                -2.152           
+##                        (4.130)          
+##                                         
+## Topic_8                -3.803           
+##                        (3.648)          
+##                                         
+## Topic_9                -3.067           
+##                        (3.653)          
+##                                         
+## Topic_10                                
+##                                         
+##                                         
+## Constant              9.653***          
+##                        (3.067)          
+##                                         
+## ----------------------------------------
+## Observations             46             
+## R2                      0.175           
+## ========================================
+## Note:        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code># Note: For some reason, all topics are associated with negative ratings, but the intercept is quite high. Probably due to the moderate-to-low ratings of these movies.</code></pre>
+</div>
 <div id="panel-data-estimation-1" class="section level2">
 <h2>Panel Data Estimation</h2>
 <pre class="r"><code># PLM
@@ -1204,6 +1292,69 @@ stargazer(unit_fe_2020,
 ## R2                      0.335           
 ## ========================================
 ## Note:        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+</div>
+<div id="scraped-metascore-model" class="section level2">
+<h2>Scraped Metascore Model</h2>
+<pre class="r"><code># metascore model using scraped data 
+metascore_model &lt;- lm(Rating ~ Metascore + Topic_1 + Topic_2 + 
+                Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
+                Topic_7 + Topic_8 + Topic_9 + Topic_10, 
+                data = dat_2020)
+stargazer(metascore_model,
+          type = &quot;text&quot;, out = &quot;Table 10&quot;, 
+          title = &quot;Overall Effect of Rating with each Topic accounting for country 2020 and Metascore&quot;, 
+          omit.stat=c(&quot;LL&quot;,&quot;ser&quot;,&quot;f&quot;,&quot;adj.rsq&quot;),
+          dep.var.labels.include = FALSE,
+          column.labels = c(&quot;Rating&quot;))</code></pre>
+<pre><code>## 
+## Overall Effect of Rating with each Topic accounting for country 2020 and Metascore
+## ========================================
+##                  Dependent variable:    
+##              ---------------------------
+##                        Rating           
+## ----------------------------------------
+## Metascore             0.047***          
+##                        (0.008)          
+##                                         
+## Topic_1                -1.499           
+##                        (2.234)          
+##                                         
+## Topic_2                 1.042           
+##                        (2.538)          
+##                                         
+## Topic_3                -0.201           
+##                        (3.345)          
+##                                         
+## Topic_4                 2.191           
+##                        (2.803)          
+##                                         
+## Topic_5                -1.850           
+##                        (2.665)          
+##                                         
+## Topic_6                -1.139           
+##                        (2.401)          
+##                                         
+## Topic_7                -4.251           
+##                        (2.900)          
+##                                         
+## Topic_8                -1.898           
+##                        (2.562)          
+##                                         
+## Topic_9                 0.470           
+##                        (2.610)          
+##                                         
+## Topic_10                                
+##                                         
+##                                         
+## Constant               4.306*           
+##                        (2.304)          
+##                                         
+## ----------------------------------------
+## Observations             46             
+## R2                      0.610           
+## ========================================
+## Note:        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code># Note: Including Metascore as a covariate seems to reduce the negative association of the topics except for topic 7, which is now viewed to be worse.</code></pre>
 </div>
 </div>
 

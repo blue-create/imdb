@@ -1,42 +1,48 @@
 
-Overall Effect of Rating with each Topic accounting for country 2020
+Overall Effect of Rating with each Topic accounting for country 2020 and Metascore
 ========================================
                  Dependent variable:    
              ---------------------------
                        Rating           
 ----------------------------------------
-Duration               0.034**          
-                       (0.013)          
+Metascore             0.047***          
+                       (0.008)          
                                         
-Topic_1                -4.538           
-                       (3.475)          
+Topic_1                -1.499           
+                       (2.234)          
                                         
-Topic_2                -4.064           
-                       (3.642)          
+Topic_2                 1.042           
+                       (2.538)          
                                         
-Topic_3                -6.101           
-                       (4.562)          
+Topic_3                -0.201           
+                       (3.345)          
                                         
-Topic_4                -0.571           
-                       (4.197)          
+Topic_4                 2.191           
+                       (2.803)          
                                         
-Topic_5                -5.116           
-                       (4.168)          
+Topic_5                -1.850           
+                       (2.665)          
                                         
-Topic_6                -4.746           
-                       (3.619)          
+Topic_6                -1.139           
+                       (2.401)          
                                         
-Topic_7                -2.610           
-                       (4.308)          
+Topic_7                -4.251           
+                       (2.900)          
                                         
-Topic_8                -1.844           
-                       (3.996)          
+Topic_8                -1.898           
+                       (2.562)          
                                         
-Topic_9                -2.498           
-                       (3.961)          
+Topic_9                 0.470           
+                       (2.610)          
+                                        
+Topic_10                                
+                                        
+                                        
+Constant               4.306*           
+                       (2.304)          
                                         
 ----------------------------------------
 Observations             46             
-R2                      0.335           
+R2                      0.610           
 ========================================
 Note:        *p<0.1; **p<0.05; ***p<0.01
