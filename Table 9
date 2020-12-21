@@ -1,525 +1,526 @@
 
-Effect of Topic accounting for country
-==============================================================================
-                                                       Dependent variable:    
-                                                   ---------------------------
-                                                             Rating           
-------------------------------------------------------------------------------
-as.factor(country)Albania                                    -0.117           
-                                                             (0.522)          
-                                                                              
-as.factor(country)Algeria                                    -0.462           
-                                                             (0.518)          
-                                                                              
-as.factor(country)Andorra                                    -1.877           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Angola                                     -0.146           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Argentina                                  -0.692           
-                                                             (0.442)          
-                                                                              
-as.factor(country)Armenia                                    -0.041           
-                                                             (0.538)          
-                                                                              
-as.factor(country)Aruba                                     -1.904***         
-                                                             (0.728)          
-                                                                              
-as.factor(country)Australia                                 -1.064**          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Austria                                    -0.578           
-                                                             (0.447)          
-                                                                              
-as.factor(country)Azerbaijan                                  0.659           
-                                                             (0.522)          
-                                                                              
-as.factor(country)Bahamas                                   -1.874***         
-                                                             (0.680)          
-                                                                              
-as.factor(country)Bangladesh                                  0.361           
-                                                             (0.456)          
-                                                                              
-as.factor(country)Belarus                                    -0.454           
-                                                             (0.802)          
-                                                                              
-as.factor(country)Belgium                                    -0.724           
-                                                             (0.443)          
-                                                                              
-as.factor(country)Bermuda                                   -2.782**          
-                                                             (1.242)          
-                                                                              
-as.factor(country)Bhutan                                      0.211           
-                                                             (0.647)          
-                                                                              
-as.factor(country)Bolivia                                    -0.397           
-                                                             (0.518)          
-                                                                              
-as.factor(country)Bosnia and Herzegovina                     -0.098           
-                                                             (0.488)          
-                                                                              
-as.factor(country)Brazil                                     -0.753*          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Brunei                                     -1.010           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Bulgaria                                    0.080           
-                                                             (0.449)          
-                                                                              
-as.factor(country)Burkina Faso                               -0.125           
-                                                             (0.621)          
-                                                                              
-as.factor(country)Cambodia                                    0.522           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Canada                                    -1.327***         
-                                                             (0.440)          
-                                                                              
-as.factor(country)Chad                                       -0.346           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Chile                                     -1.101**          
-                                                             (0.449)          
-                                                                              
-as.factor(country)China                                      -0.748*          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Colombia                                   -0.591           
-                                                             (0.451)          
-                                                                              
-as.factor(country)Costa Rica                                 -0.545           
-                                                             (0.532)          
-                                                                              
-as.factor(country)Côte d'Ivoire                               0.418           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Croatia                                    -0.439           
-                                                             (0.451)          
-                                                                              
-as.factor(country)Cuba                                       -0.159           
-                                                             (0.484)          
-                                                                              
-as.factor(country)Cyprus                                     -0.519           
-                                                             (0.646)          
-                                                                              
-as.factor(country)Czech Republic                             -0.789*          
-                                                             (0.446)          
-                                                                              
-as.factor(country)Czechoslovakia                              0.268           
-                                                             (0.446)          
-                                                                              
-as.factor(country)Denmark                                    -0.861*          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Dominican Republic                         -0.449           
-                                                             (0.473)          
-                                                                              
-as.factor(country)East Germany                               -0.215           
-                                                             (0.466)          
-                                                                              
-as.factor(country)Ecuador                                    -0.393           
-                                                             (0.545)          
-                                                                              
-as.factor(country)Egypt                                      -0.665           
-                                                             (0.443)          
-                                                                              
-as.factor(country)Estonia                                    -0.418           
-                                                             (0.459)          
-                                                                              
-as.factor(country)Ethiopia                                   -0.046           
-                                                             (0.802)          
-                                                                              
-as.factor(country)Federal Republic of Yugoslavia             -0.287           
-                                                             (0.461)          
-                                                                              
-as.factor(country)Finland                                   -0.899**          
-                                                             (0.442)          
-                                                                              
-as.factor(country)France                                     -0.669           
-                                                             (0.440)          
-                                                                              
-as.factor(country)Georgia                                     0.155           
-                                                             (0.474)          
-                                                                              
-as.factor(country)Germany                                    -0.839*          
-                                                             (0.440)          
-                                                                              
-as.factor(country)Ghana                                      -0.905           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Gibraltar                                 -2.652**          
-                                                             (1.242)          
-                                                                              
-as.factor(country)Greece                                     -0.676           
-                                                             (0.442)          
-                                                                              
-as.factor(country)Greenland                                  -0.472           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Guatemala                                  -0.395           
-                                                             (0.621)          
-                                                                              
-as.factor(country)Guinea                                     -0.270           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Haiti                                      -0.717           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Honduras                                   -0.273           
-                                                             (0.802)          
-                                                                              
-as.factor(country)Hong Kong                                  -0.679           
-                                                             (0.440)          
-                                                                              
-as.factor(country)Hungary                                    -0.389           
-                                                             (0.443)          
-                                                                              
-as.factor(country)Iceland                                    -0.535           
-                                                             (0.453)          
-                                                                              
-as.factor(country)India                                      -0.599           
-                                                             (0.440)          
-                                                                              
-as.factor(country)Indonesia                                  -0.351           
-                                                             (0.445)          
-                                                                              
-as.factor(country)Iran                                      -0.953**          
-                                                             (0.442)          
-                                                                              
-as.factor(country)Iraq                                       -0.237           
-                                                             (0.562)          
-                                                                              
-as.factor(country)Ireland                                    -0.832*          
-                                                             (0.445)          
-                                                                              
-as.factor(country)Isle Of Man                                -0.750           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Israel                                     -0.416           
-                                                             (0.446)          
-                                                                              
-as.factor(country)Italy                                     -0.873**          
-                                                             (0.440)          
-                                                                              
-as.factor(country)Jamaica                                    -0.475           
-                                                             (0.553)          
-                                                                              
-as.factor(country)Japan                                      -0.212           
-                                                             (0.440)          
-                                                                              
-as.factor(country)Jordan                                     -0.499           
-                                                             (0.647)          
-                                                                              
-as.factor(country)Kazakhstan                                 -0.539           
-                                                             (0.491)          
-                                                                              
-as.factor(country)Kenya                                       0.184           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Korea                                      -1.938           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Kosovo                                     -0.374           
-                                                             (0.562)          
-                                                                              
-as.factor(country)Kuwait                                     -0.360           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Kyrgyzstan                                 -0.294           
-                                                             (0.601)          
-                                                                              
-as.factor(country)Laos                                       -0.833           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Latvia                                     -0.031           
-                                                             (0.476)          
-                                                                              
-as.factor(country)Lebanon                                    -0.384           
-                                                             (0.486)          
-                                                                              
-as.factor(country)Lesotho                                     0.389           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Libya                                       1.958           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Liechtenstein                             -1.630**          
-                                                             (0.802)          
-                                                                              
-as.factor(country)Lithuania                                  -0.494           
-                                                             (0.462)          
-                                                                              
-as.factor(country)Luxembourg                                -1.072**          
-                                                             (0.489)          
-                                                                              
-as.factor(country)Malaysia                                   -0.711           
-                                                             (0.459)          
-                                                                              
-as.factor(country)Mali                                       -0.269           
-                                                             (0.680)          
-                                                                              
-as.factor(country)Malta                                     -1.372**          
-                                                             (0.621)          
-                                                                              
-as.factor(country)Mauritania                                  0.119           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Mauritius                                  -0.786           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Mexico                                     -0.710           
-                                                             (0.441)          
-                                                                              
-as.factor(country)Moldova                                     0.675           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Mongolia                                   -0.225           
-                                                             (0.647)          
-                                                                              
-as.factor(country)Montenegro                                 -0.508           
-                                                             (0.680)          
-                                                                              
-as.factor(country)Morocco                                    -0.712           
-                                                             (0.545)          
-                                                                              
-as.factor(country)Mozambique                                 -0.374           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Myanmar                                     0.921           
-                                                             (0.802)          
-                                                                              
-as.factor(country)Nepal                                       0.247           
-                                                             (0.502)          
-                                                                              
-as.factor(country)Netherlands                                -0.743*          
-                                                             (0.442)          
-                                                                              
-as.factor(country)Netherlands Antilles                       -1.230           
-                                                             (1.242)          
-                                                                              
-as.factor(country)New Zealand                                -0.708           
-                                                             (0.449)          
-                                                                              
-as.factor(country)Nicaragua                                  -0.348           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Nigeria                                   -1.340***         
-                                                             (0.495)          
-                                                                              
-as.factor(country)North Korea                                -1.123*          
-                                                             (0.680)          
-                                                                              
-as.factor(country)North Vietnam                               0.171           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Norway                                    -0.902**          
-                                                             (0.443)          
-                                                                              
-as.factor(country)Oman                                        0.118           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Pakistan                                   -0.184           
-                                                             (0.460)          
-                                                                              
-as.factor(country)Palestine                                  -0.025           
-                                                             (0.532)          
-                                                                              
-as.factor(country)Panama                                     -0.118           
-                                                             (0.647)          
-                                                                              
-as.factor(country)Papua New Guinea                            0.206           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Paraguay                                    0.061           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Peru                                       -0.907*          
-                                                             (0.465)          
-                                                                              
-as.factor(country)Philippines                                -0.754*          
-                                                             (0.444)          
-                                                                              
-as.factor(country)Poland                                     -0.618           
-                                                             (0.442)          
-                                                                              
-as.factor(country)Portugal                                   -0.584           
-                                                             (0.446)          
-                                                                              
-as.factor(country)Puerto Rico                                -0.741           
-                                                             (0.502)          
-                                                                              
-as.factor(country)Qatar                                       0.342           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Republic of North Macedonia                 0.179           
-                                                             (0.485)          
-                                                                              
-as.factor(country)Romania                                     0.076           
-                                                             (0.445)          
-                                                                              
-as.factor(country)Russia                                    -0.977**          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Rwanda                                     -0.073           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Saudi Arabia                                0.171           
-                                                             (0.647)          
-                                                                              
-as.factor(country)Senegal                                     0.147           
-                                                             (0.538)          
-                                                                              
-as.factor(country)Serbia                                     -0.564           
-                                                             (0.449)          
-                                                                              
-as.factor(country)Serbia and Montenegro                      -1.245           
-                                                             (0.932)          
-                                                                              
-as.factor(country)Singapore                                  -0.695           
-                                                             (0.463)          
-                                                                              
-as.factor(country)Slovakia                                   -0.668           
-                                                             (0.489)          
-                                                                              
-as.factor(country)Slovenia                                   -0.332           
-                                                             (0.464)          
-                                                                              
-as.factor(country)Somalia                                     0.105           
-                                                             (1.242)          
-                                                                              
-as.factor(country)South Africa                              -1.180***         
-                                                             (0.447)          
-                                                                              
-as.factor(country)South Korea                                -0.413           
-                                                             (0.441)          
-                                                                              
-as.factor(country)Soviet Union                                0.356           
-                                                             (0.441)          
-                                                                              
-as.factor(country)Spain                                     -0.954**          
-                                                             (0.440)          
-                                                                              
-as.factor(country)Sri Lanka                                   0.446           
-                                                             (0.480)          
-                                                                              
-as.factor(country)Sudan                                       0.149           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Suriname                                   -0.233           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Sweden                                    -1.118**          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Switzerland                                -0.632           
-                                                             (0.446)          
-                                                                              
-as.factor(country)Syria                                       0.335           
-                                                             (0.680)          
-                                                                              
-as.factor(country)Taiwan                                     -0.641           
-                                                             (0.445)          
-                                                                              
-as.factor(country)Tajikistan                                 -0.166           
-                                                             (0.728)          
-                                                                              
-as.factor(country)Tanzania                                   -0.299           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Thailand                                  -0.873**          
-                                                             (0.445)          
-                                                                              
-as.factor(country)The Democratic Republic Of Congo           -0.624           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Trinidad and Tobago                       -1.546**          
-                                                             (0.728)          
-                                                                              
-as.factor(country)Tunisia                                    -0.314           
-                                                             (0.499)          
-                                                                              
-as.factor(country)Turkey                                    -0.889**          
-                                                             (0.441)          
-                                                                              
-as.factor(country)Uganda                                      0.302           
-                                                             (0.728)          
-                                                                              
-as.factor(country)UK                                        -0.868**          
-                                                             (0.440)          
-                                                                              
-as.factor(country)Ukraine                                    -0.426           
-                                                             (0.461)          
-                                                                              
-as.factor(country)United Arab Emirates                      -1.079**          
-                                                             (0.514)          
-                                                                              
-as.factor(country)Uruguay                                    -0.315           
-                                                             (0.499)          
-                                                                              
-as.factor(country)USA                                       -1.177***         
-                                                             (0.439)          
-                                                                              
-as.factor(country)Uzbekistan                                  1.098           
-                                                             (1.242)          
-                                                                              
-as.factor(country)Venezuela                                  -0.279           
-                                                             (0.474)          
-                                                                              
-as.factor(country)Vietnam                                    -0.262           
-                                                             (0.466)          
-                                                                              
-as.factor(country)West Germany                               -0.800*          
-                                                             (0.442)          
-                                                                              
-as.factor(country)Yemen                                       0.542           
-                                                             (0.802)          
-                                                                              
-as.factor(country)Yugoslavia                                  0.195           
-                                                             (0.444)          
-                                                                              
-as.factor(country)Zambia                                     -2.080*          
-                                                             (1.242)          
-                                                                              
-as.factor(country)Zimbabwe                                   -1.022           
-                                                             (1.242)          
-                                                                              
-Topic_1                                                     -0.636***         
-                                                             (0.113)          
-                                                                              
-Topic_2                                                      0.197*           
-                                                             (0.118)          
-                                                                              
-Topic_3                                                       0.153           
-                                                             (0.125)          
-                                                                              
-Topic_4                                                     0.584***          
-                                                             (0.119)          
-                                                                              
-Topic_5                                                       0.155           
-                                                             (0.118)          
-                                                                              
-Topic_6                                                     -0.901***         
-                                                             (0.120)          
-                                                                              
-Topic_7                                                     0.482***          
-                                                             (0.117)          
-                                                                              
-Topic_8                                                     -0.804***         
-                                                             (0.116)          
-                                                                              
-Topic_9                                                     -0.278**          
-                                                             (0.115)          
-                                                                              
-Topic_10                                                                      
-                                                                              
-                                                                              
-Constant                                                    6.906***          
-                                                             (0.452)          
-                                                                              
-------------------------------------------------------------------------------
-Observations                                                 79,474           
-R2                                                            0.107           
-==============================================================================
-Note:                                              *p<0.1; **p<0.05; ***p<0.01
+Comparison between Topics and FE Topics Model
+===============================================================================
+                                                       Dependent variable:     
+                                                   ----------------------------
+                                                   Topics Model FE Topics Model
+                                                       (1)            (2)      
+-------------------------------------------------------------------------------
+Topic_1                                             -0.806***      -0.636***   
+                                                     (0.115)        (0.113)    
+                                                                               
+Topic_2                                               -0.052        0.197*     
+                                                     (0.120)        (0.118)    
+                                                                               
+Topic_3                                              0.388***        0.153     
+                                                     (0.126)        (0.125)    
+                                                                               
+Topic_4                                              0.670***      0.584***    
+                                                     (0.121)        (0.119)    
+                                                                               
+Topic_5                                              0.249**         0.155     
+                                                     (0.120)        (0.118)    
+                                                                               
+Topic_6                                             -1.219***      -0.901***   
+                                                     (0.122)        (0.120)    
+                                                                               
+Topic_7                                              0.504***      0.482***    
+                                                     (0.119)        (0.117)    
+                                                                               
+Topic_8                                             -0.888***      -0.804***   
+                                                     (0.118)        (0.116)    
+                                                                               
+Topic_9                                             -0.578***      -0.278**    
+                                                     (0.117)        (0.115)    
+                                                                               
+Topic_10                                                                       
+                                                                               
+                                                                               
+as.factor(country)Albania                                           -0.117     
+                                                                    (0.522)    
+                                                                               
+as.factor(country)Algeria                                           -0.462     
+                                                                    (0.518)    
+                                                                               
+as.factor(country)Andorra                                           -1.877     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Angola                                            -0.146     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Argentina                                         -0.692     
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Armenia                                           -0.041     
+                                                                    (0.538)    
+                                                                               
+as.factor(country)Aruba                                            -1.904***   
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Australia                                        -1.064**    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Austria                                           -0.578     
+                                                                    (0.447)    
+                                                                               
+as.factor(country)Azerbaijan                                         0.659     
+                                                                    (0.522)    
+                                                                               
+as.factor(country)Bahamas                                          -1.874***   
+                                                                    (0.680)    
+                                                                               
+as.factor(country)Bangladesh                                         0.361     
+                                                                    (0.456)    
+                                                                               
+as.factor(country)Belarus                                           -0.454     
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Belgium                                           -0.724     
+                                                                    (0.443)    
+                                                                               
+as.factor(country)Bermuda                                          -2.782**    
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Bhutan                                             0.211     
+                                                                    (0.647)    
+                                                                               
+as.factor(country)Bolivia                                           -0.397     
+                                                                    (0.518)    
+                                                                               
+as.factor(country)Bosnia and Herzegovina                            -0.098     
+                                                                    (0.488)    
+                                                                               
+as.factor(country)Brazil                                            -0.753*    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Brunei                                            -1.010     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Bulgaria                                           0.080     
+                                                                    (0.449)    
+                                                                               
+as.factor(country)Burkina Faso                                      -0.125     
+                                                                    (0.621)    
+                                                                               
+as.factor(country)Cambodia                                           0.522     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Canada                                           -1.327***   
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Chad                                              -0.346     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Chile                                            -1.101**    
+                                                                    (0.449)    
+                                                                               
+as.factor(country)China                                             -0.748*    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Colombia                                          -0.591     
+                                                                    (0.451)    
+                                                                               
+as.factor(country)Costa Rica                                        -0.545     
+                                                                    (0.532)    
+                                                                               
+as.factor(country)Côte d'Ivoire                                      0.418     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Croatia                                           -0.439     
+                                                                    (0.451)    
+                                                                               
+as.factor(country)Cuba                                              -0.159     
+                                                                    (0.484)    
+                                                                               
+as.factor(country)Cyprus                                            -0.519     
+                                                                    (0.646)    
+                                                                               
+as.factor(country)Czech Republic                                    -0.789*    
+                                                                    (0.446)    
+                                                                               
+as.factor(country)Czechoslovakia                                     0.268     
+                                                                    (0.446)    
+                                                                               
+as.factor(country)Denmark                                           -0.861*    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Dominican Republic                                -0.449     
+                                                                    (0.473)    
+                                                                               
+as.factor(country)East Germany                                      -0.215     
+                                                                    (0.466)    
+                                                                               
+as.factor(country)Ecuador                                           -0.393     
+                                                                    (0.545)    
+                                                                               
+as.factor(country)Egypt                                             -0.665     
+                                                                    (0.443)    
+                                                                               
+as.factor(country)Estonia                                           -0.418     
+                                                                    (0.459)    
+                                                                               
+as.factor(country)Ethiopia                                          -0.046     
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Federal Republic of Yugoslavia                    -0.287     
+                                                                    (0.461)    
+                                                                               
+as.factor(country)Finland                                          -0.899**    
+                                                                    (0.442)    
+                                                                               
+as.factor(country)France                                            -0.669     
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Georgia                                            0.155     
+                                                                    (0.474)    
+                                                                               
+as.factor(country)Germany                                           -0.839*    
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Ghana                                             -0.905     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Gibraltar                                        -2.652**    
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Greece                                            -0.676     
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Greenland                                         -0.472     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Guatemala                                         -0.395     
+                                                                    (0.621)    
+                                                                               
+as.factor(country)Guinea                                            -0.270     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Haiti                                             -0.717     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Honduras                                          -0.273     
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Hong Kong                                         -0.679     
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Hungary                                           -0.389     
+                                                                    (0.443)    
+                                                                               
+as.factor(country)Iceland                                           -0.535     
+                                                                    (0.453)    
+                                                                               
+as.factor(country)India                                             -0.599     
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Indonesia                                         -0.351     
+                                                                    (0.445)    
+                                                                               
+as.factor(country)Iran                                             -0.953**    
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Iraq                                              -0.237     
+                                                                    (0.562)    
+                                                                               
+as.factor(country)Ireland                                           -0.832*    
+                                                                    (0.445)    
+                                                                               
+as.factor(country)Isle Of Man                                       -0.750     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Israel                                            -0.416     
+                                                                    (0.446)    
+                                                                               
+as.factor(country)Italy                                            -0.873**    
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Jamaica                                           -0.475     
+                                                                    (0.553)    
+                                                                               
+as.factor(country)Japan                                             -0.212     
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Jordan                                            -0.499     
+                                                                    (0.647)    
+                                                                               
+as.factor(country)Kazakhstan                                        -0.539     
+                                                                    (0.491)    
+                                                                               
+as.factor(country)Kenya                                              0.184     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Korea                                             -1.938     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Kosovo                                            -0.374     
+                                                                    (0.562)    
+                                                                               
+as.factor(country)Kuwait                                            -0.360     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Kyrgyzstan                                        -0.294     
+                                                                    (0.601)    
+                                                                               
+as.factor(country)Laos                                              -0.833     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Latvia                                            -0.031     
+                                                                    (0.476)    
+                                                                               
+as.factor(country)Lebanon                                           -0.384     
+                                                                    (0.486)    
+                                                                               
+as.factor(country)Lesotho                                            0.389     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Libya                                              1.958     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Liechtenstein                                    -1.630**    
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Lithuania                                         -0.494     
+                                                                    (0.462)    
+                                                                               
+as.factor(country)Luxembourg                                       -1.072**    
+                                                                    (0.489)    
+                                                                               
+as.factor(country)Malaysia                                          -0.711     
+                                                                    (0.459)    
+                                                                               
+as.factor(country)Mali                                              -0.269     
+                                                                    (0.680)    
+                                                                               
+as.factor(country)Malta                                            -1.372**    
+                                                                    (0.621)    
+                                                                               
+as.factor(country)Mauritania                                         0.119     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Mauritius                                         -0.786     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Mexico                                            -0.710     
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Moldova                                            0.675     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Mongolia                                          -0.225     
+                                                                    (0.647)    
+                                                                               
+as.factor(country)Montenegro                                        -0.508     
+                                                                    (0.680)    
+                                                                               
+as.factor(country)Morocco                                           -0.712     
+                                                                    (0.545)    
+                                                                               
+as.factor(country)Mozambique                                        -0.374     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Myanmar                                            0.921     
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Nepal                                              0.247     
+                                                                    (0.502)    
+                                                                               
+as.factor(country)Netherlands                                       -0.743*    
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Netherlands Antilles                              -1.230     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)New Zealand                                       -0.708     
+                                                                    (0.449)    
+                                                                               
+as.factor(country)Nicaragua                                         -0.348     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Nigeria                                          -1.340***   
+                                                                    (0.495)    
+                                                                               
+as.factor(country)North Korea                                       -1.123*    
+                                                                    (0.680)    
+                                                                               
+as.factor(country)North Vietnam                                      0.171     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Norway                                           -0.902**    
+                                                                    (0.443)    
+                                                                               
+as.factor(country)Oman                                               0.118     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Pakistan                                          -0.184     
+                                                                    (0.460)    
+                                                                               
+as.factor(country)Palestine                                         -0.025     
+                                                                    (0.532)    
+                                                                               
+as.factor(country)Panama                                            -0.118     
+                                                                    (0.647)    
+                                                                               
+as.factor(country)Papua New Guinea                                   0.206     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Paraguay                                           0.061     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Peru                                              -0.907*    
+                                                                    (0.465)    
+                                                                               
+as.factor(country)Philippines                                       -0.754*    
+                                                                    (0.444)    
+                                                                               
+as.factor(country)Poland                                            -0.618     
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Portugal                                          -0.584     
+                                                                    (0.446)    
+                                                                               
+as.factor(country)Puerto Rico                                       -0.741     
+                                                                    (0.502)    
+                                                                               
+as.factor(country)Qatar                                              0.342     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Republic of North Macedonia                        0.179     
+                                                                    (0.485)    
+                                                                               
+as.factor(country)Romania                                            0.076     
+                                                                    (0.445)    
+                                                                               
+as.factor(country)Russia                                           -0.977**    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Rwanda                                            -0.073     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Saudi Arabia                                       0.171     
+                                                                    (0.647)    
+                                                                               
+as.factor(country)Senegal                                            0.147     
+                                                                    (0.538)    
+                                                                               
+as.factor(country)Serbia                                            -0.564     
+                                                                    (0.449)    
+                                                                               
+as.factor(country)Serbia and Montenegro                             -1.245     
+                                                                    (0.932)    
+                                                                               
+as.factor(country)Singapore                                         -0.695     
+                                                                    (0.463)    
+                                                                               
+as.factor(country)Slovakia                                          -0.668     
+                                                                    (0.489)    
+                                                                               
+as.factor(country)Slovenia                                          -0.332     
+                                                                    (0.464)    
+                                                                               
+as.factor(country)Somalia                                            0.105     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)South Africa                                     -1.180***   
+                                                                    (0.447)    
+                                                                               
+as.factor(country)South Korea                                       -0.413     
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Soviet Union                                       0.356     
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Spain                                            -0.954**    
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Sri Lanka                                          0.446     
+                                                                    (0.480)    
+                                                                               
+as.factor(country)Sudan                                              0.149     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Suriname                                          -0.233     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Sweden                                           -1.118**    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Switzerland                                       -0.632     
+                                                                    (0.446)    
+                                                                               
+as.factor(country)Syria                                              0.335     
+                                                                    (0.680)    
+                                                                               
+as.factor(country)Taiwan                                            -0.641     
+                                                                    (0.445)    
+                                                                               
+as.factor(country)Tajikistan                                        -0.166     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Tanzania                                          -0.299     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Thailand                                         -0.873**    
+                                                                    (0.445)    
+                                                                               
+as.factor(country)The Democratic Republic Of Congo                  -0.624     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Trinidad and Tobago                              -1.546**    
+                                                                    (0.728)    
+                                                                               
+as.factor(country)Tunisia                                           -0.314     
+                                                                    (0.499)    
+                                                                               
+as.factor(country)Turkey                                           -0.889**    
+                                                                    (0.441)    
+                                                                               
+as.factor(country)Uganda                                             0.302     
+                                                                    (0.728)    
+                                                                               
+as.factor(country)UK                                               -0.868**    
+                                                                    (0.440)    
+                                                                               
+as.factor(country)Ukraine                                           -0.426     
+                                                                    (0.461)    
+                                                                               
+as.factor(country)United Arab Emirates                             -1.079**    
+                                                                    (0.514)    
+                                                                               
+as.factor(country)Uruguay                                           -0.315     
+                                                                    (0.499)    
+                                                                               
+as.factor(country)USA                                              -1.177***   
+                                                                    (0.439)    
+                                                                               
+as.factor(country)Uzbekistan                                         1.098     
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Venezuela                                         -0.279     
+                                                                    (0.474)    
+                                                                               
+as.factor(country)Vietnam                                           -0.262     
+                                                                    (0.466)    
+                                                                               
+as.factor(country)West Germany                                      -0.800*    
+                                                                    (0.442)    
+                                                                               
+as.factor(country)Yemen                                              0.542     
+                                                                    (0.802)    
+                                                                               
+as.factor(country)Yugoslavia                                         0.195     
+                                                                    (0.444)    
+                                                                               
+as.factor(country)Zambia                                            -2.080*    
+                                                                    (1.242)    
+                                                                               
+as.factor(country)Zimbabwe                                          -1.022     
+                                                                    (1.242)    
+                                                                               
+Constant                                             6.121***      6.906***    
+                                                     (0.109)        (0.452)    
+                                                                               
+-------------------------------------------------------------------------------
+Observations                                          79,474        79,474     
+R2                                                    0.034          0.107     
+===============================================================================
+Note:                                               *p<0.1; **p<0.05; ***p<0.01

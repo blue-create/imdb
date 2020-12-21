@@ -1,63 +1,64 @@
 
-Effect of each Topic accounting for country 2020
+Comparison between 2020 Topics Model and 2020 FE Topics Model
 ======================================================
-                               Dependent variable:    
-                           ---------------------------
-                                     Rating           
+                              Dependent variable:     
+                          ----------------------------
+                          Topics Model FE Topics Model
+                              (1)            (2)      
 ------------------------------------------------------
-Topic_1                              -3.801           
-                                     (3.756)          
+Topic_1                      -3.801        -4.261     
+                            (3.756)        (3.141)    
                                                       
-Topic_2                              -3.432           
-                                     (3.941)          
+Topic_2                      -3.432        -4.091     
+                            (3.941)        (3.444)    
                                                       
-Topic_3                              -6.073           
-                                     (4.949)          
+Topic_3                      -6.073        -7.822*    
+                            (4.949)        (4.466)    
                                                       
-Topic_4                              -2.177           
-                                     (4.499)          
+Topic_4                      -2.177        -1.892     
+                            (4.499)        (3.909)    
                                                       
-Topic_5                              -2.199           
-                                     (4.341)          
+Topic_5                      -2.199        -2.773     
+                            (4.341)        (3.815)    
                                                       
-Topic_6                              -5.276           
-                                     (3.919)          
+Topic_6                      -5.276        -4.326     
+                            (3.919)        (3.364)    
                                                       
-Topic_7                              -2.252           
-                                     (4.670)          
+Topic_7                      -2.252        -2.152     
+                            (4.670)        (4.130)    
                                                       
-Topic_8                              -2.971           
-                                     (4.307)          
+Topic_8                      -2.971        -3.803     
+                            (4.307)        (3.648)    
                                                       
-Topic_9                              -2.065           
-                                     (4.293)          
+Topic_9                      -2.065        -3.067     
+                            (4.293)        (3.653)    
                                                       
 Topic_10                                              
                                                       
                                                       
-as.factor(Country) Canada             1.462           
-                                     (1.258)          
+as.factor(Country)Canada     1.462                    
+                            (1.258)                   
                                                       
-as.factor(Country) China             -0.347           
-                                     (1.426)          
+as.factor(Country)China      -0.347                   
+                            (1.426)                   
                                                       
-as.factor(Country) Ireland            1.300           
-                                     (1.433)          
+as.factor(Country)Ireland    1.300                    
+                            (1.433)                   
                                                       
-as.factor(Country) Russia             1.202           
-                                     (1.603)          
+as.factor(Country)Russia     1.202                    
+                            (1.603)                   
                                                       
-as.factor(Country) UK                 0.804           
-                                     (1.221)          
+as.factor(Country)UK         0.804                    
+                            (1.221)                   
                                                       
-as.factor(Country) USA                0.358           
-                                     (1.193)          
+as.factor(Country)USA        0.358                    
+                            (1.193)                   
                                                       
-Constant                             8.759**          
-                                     (3.226)          
+Constant                    8.759**       9.653***    
+                            (3.226)        (3.067)    
                                                       
 ------------------------------------------------------
-Observations                           46             
-R2                                    0.328           
+Observations                   46            46       
+R2                           0.328          0.175     
 ======================================================
 Note:                      *p<0.1; **p<0.05; ***p<0.01

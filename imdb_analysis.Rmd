@@ -210,15 +210,15 @@ stargazer(india_len_model,
 ## Fixed Effect Model
 ```{r fe, warning = FALSE}
 # Fixed effect model 
-unit_fe_kaggle <- lm(rating ~ as.factor(country) + Topic_1 + Topic_2 + Topic_3 + 
+unit_fe_kaggle <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 + 
                     Topic_4 + Topic_5 + Topic_6 + Topic_7 + Topic_8 + 
-                    Topic_9 + Topic_10, data = dat_kaggle)
-stargazer(unit_fe_kaggle,
+                    Topic_9 + Topic_10 + as.factor(country), data = dat_kaggle)
+stargazer(topics_only_model, unit_fe_kaggle,
           type = "text", out = "Table 9", 
-          title = "Effect of Topic accounting for country", 
+          title = "Comparison between Topics and FE Topics Model", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
-          column.labels = c("Rating"))
+          column.labels = c("Topics Model", " FE Topics Model"))
 # Note: Constant is quite moderate at 6.9, and the effects of each topic are all below 1 rating unit.
 ```
 # Scraped data analyses 
@@ -293,7 +293,7 @@ stargazer(uk_romance_model_2020,
 ```
 
 ## USA Model
-```{r USA mode, warning = FALSE}
+```{r scraped USA mode, warning = FALSE}
 
 # USA
 dat_2020$USA <- NA
@@ -322,11 +322,11 @@ unit_fe_2020 <- lm(Rating ~ Topic_1 + Topic_2 +
                 Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
                 Topic_7 + Topic_8 + Topic_9 + Topic_10 +
                 as.factor(Country), data = dat_2020)
-stargazer(unit_fe_2020,
+stargazer(unit_fe_2020, topics_scraped_model,
           type = "text", out = "Table 14", 
-          title = "Effect of each Topic accounting for country 2020", 
+          title = "Comparison between 2020 Topics Model and 2020 FE Topics Model", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
-          column.labels = c("Rating"))
+          column.labels = c("Topics Model", "FE Topics Model"))
 # Note: Overall rating is high at 8.7, but the other estimates are statistically insignificant. 
 ```
