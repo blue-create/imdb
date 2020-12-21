@@ -78,8 +78,8 @@ kaggle1 <- kaggle %>%
 names(kaggle1)
 
 # Manage multiple and missing countries
-kaggle1$country <- gsub(",.*$", "\\1", kaggle1$country) # keep first country 
-kaggle1[which(kaggle1$country == ""),2] <-  NA # replace missing values with NA
+#kaggle1$country <- gsub(",.*$", "\\1", kaggle1$country) # keep first country 
+#kaggle1[which(kaggle1$country == ""),2] <-  NA # replace missing values with NA
 
 # convert factors to character columns  
 kaggle1 <- kaggle1 %>%
@@ -120,7 +120,7 @@ dat_test <- total %>%
 names(dat_test)
 
 # Keep first country 
-dat_test$Country <- gsub(",.*$", "\\1", dat_test$Country)
+#dat_test$Country <- gsub(",.*$", "\\1", dat_test$Country)
 
 # Convert numeric to integer 
 colsnum <- c("Duration")
@@ -244,6 +244,7 @@ rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 ```
 
 ```{r combine thetas into full datasets}
+
 # Add topic scores into kaggle df
 thetas_kaggle <- setDT(thetas_kaggle, keep.rownames = TRUE)
 names(thetas_kaggle)[1] <- "title" 
@@ -254,5 +255,15 @@ dat_kaggle <- select(dat_kaggle, -c(title, description)) # won't use for model
 thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
 names(thetas_2020)[1] <- "Title" 
 dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
+
+# Manage multiple countries
+dat_kaggle$country <- gsub(",.*$", "\\1", dat_kaggle$country) # keep first country 
+dat_2020$Country <- gsub(",.*$", "\\1", dat_2020$Country)
+
+saveRDS(dat_kaggle, file = "data/dat_kaggle.rds")
+saveRDS(dat_2020, file = "data/dat_2020.rds")
+
+
+
 ```
 
