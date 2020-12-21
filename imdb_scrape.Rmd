@@ -291,11 +291,9 @@ vote <- vot %>%
   select(Votes)
 ```
 
+We are including the following code chunk to show how we reached this point, but it will create a demo version that is potentially different from the saved version used for the analysis. This is due to the changing nature of the list itself. 
 
 ``` {r final}
-# We are including this to show how we reached this point, but it is just a demo verison
-# later sections of the project will use a version we have saved
-
 # Combine df 
 total_demo <- cbind(titles, rating, vote, description, metadat, crew)
 write.xlsx(total_demo, 'data/scraped_data.xlsx')
