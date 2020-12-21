@@ -272,6 +272,24 @@ stargazer(duration_model_2020,type = "text", out = "Table 11",
 # Note: longer films have higher ratings
 ```
 
+## British Model
+```{r}
+# UK
+dat_2020$UK <- NA
+dat_2020$UK[dat_2020$Country=="UK"]<-1
+dat_2020$UK[is.na(dat_2020$UK)]<- 0
+
+uk_romance_model_2020 <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
+summary(uk_romance_model)
+
+stargazer(uk_romance_model_2020,
+          type = "text", out = "Table 12", 
+          title = "British Romance Films for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in UK"))
+```
+
 ## Country Model 
 ``` {r scraped country model, warning = FALSE}
 # Prepare country variable
@@ -283,10 +301,7 @@ dat_2020$Country <- str_trim(dat_2020$Country)
 dat_2020$USA <- NA
 dat_2020$USA[dat_2020$Country=="USA"]<-1
 dat_2020$USA[is.na(dat_2020$USA)]<- 0
-# UK
-dat_2020$UK <- NA
-dat_2020$UK[dat_2020$Country=="UK"]<-1
-dat_2020$UK[is.na(dat_2020$UK)]<- 0
+
 # Canada
 dat_2020$Canada <- NA
 dat_2020$Canada[dat_2020$Country=="Canada"]<-1
@@ -295,7 +310,7 @@ dat_2020$Canada[is.na(dat_2020$Canada)]<- 0
 # Country Model
 country_model_2020 <- lm(Rating ~ USA  + UK + Canada, data = dat_2020)
 summary(country_model_2020)
-stargazer(country_model_2020,type = "text", out = "Table 12", 
+stargazer(country_model_2020,type = "text", out = "Table 13", 
           title = "Country Model: USA, UK, Canada", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -311,7 +326,7 @@ unit_fe_2020 <- lm(Rating ~ Topic_1 + Topic_2 +
                 Topic_7 + Topic_8 + Topic_9 + Topic_10 +
                 as.factor(Country), data = dat_2020)
 stargazer(unit_fe_2020,
-          type = "text", out = "Table 10", 
+          type = "text", out = "Table 14", 
           title = "Effect of each Topic accounting for country 2020", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
@@ -326,7 +341,7 @@ metascore_model <- lm(Rating ~ Metascore + Topic_1 + Topic_2 +
                 Topic_7 + Topic_8 + Topic_9 + Topic_10, 
                 data = dat_2020)
 stargazer(metascore_model,
-          type = "text", out = "Table 10", 
+          type = "text", out = "Table 15", 
           title = "Overall Effect of Rating with each Topic accounting for country 2020 and Metascore", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
