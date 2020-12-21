@@ -181,15 +181,15 @@ stargazer(denmark_crime_model ,sweden_crime_model,
 ```{r USA mode, warning = FALSE}
 # USA model
 usa_crime_model <- lm(rating ~ USA*Topic_9, data = dat_kaggle)
-usa_fiction_model<- lm(rating ~ USA*Topic_1, data = dat_kaggle)
+usa_battle_model<- lm(rating ~ USA*Topic_1, data = dat_kaggle)
 summary(usa_crime_model)
-summary(usa_fiction_model)
-stargazer(usa_crime_model,usa_fiction_model,
+summary(usa_battle_model)
+stargazer(usa_crime_model,usa_battle_model,
           type = "text", out = "Table 7", 
-          title = "USA: Crime & Fiction Movies", 
+          title = "USA: Crime & Battle Movies", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
-          column.labels = c("Rating of Crime Movies", "Rating of Finction Movies"))
+          column.labels = c("Rating of Crime Movies", "Rating of Battle Movies"))
 # Note: USA-made killer-cop-gang-serial films seem to do  better than the average USA-made film.
 ```
 
@@ -245,7 +245,7 @@ names(dat_2020)[18] <-"Topic_10"
 dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
-## Scraped Topics Model 
+## Topics Model (2020)
 ``` {r scraped topics model, warning = FALSE }
 # Topics model using scraped data 
 topics_scraped_model <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 + 
@@ -259,7 +259,7 @@ stargazer(topics_scraped_model,type = "text", out = "Table 1",
           column.labels = c("Rating"))
 ```
 
-## Duration Model 
+## Duration Model (2020)
 ```{r scraped duration model, warning = FALSE}
 # Duration Model
 duration_model_2020 <- lm(Rating ~ Duration, data = dat_2020)
@@ -272,16 +272,17 @@ stargazer(duration_model_2020,type = "text", out = "Table 11",
 # Note: longer films have higher ratings
 ```
 
-## British Model
+## British Model (2020)
 ```{r}
 # UK
 dat_2020$UK <- NA
 dat_2020$UK[dat_2020$Country=="UK"]<-1
 dat_2020$UK[is.na(dat_2020$UK)]<- 0
 
-uk_romance_model_2020 <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
-summary(uk_romance_model)
+uk_romance_model_2020 <- lm(Rating ~ UK*Topic_7, data = dat_2020)
+summary(uk_romance_model_2020)
 
+# issue with stargazer
 stargazer(uk_romance_model_2020,
           type = "text", out = "Table 12", 
           title = "British Romance Films for 2020", 
@@ -297,11 +298,6 @@ dat_2020$Country <- as.character(dat_2020$Country)
 dat_2020$Country <- str_trim(dat_2020$Country)
 
 # Create country dummy variables
-# USA
-dat_2020$USA <- NA
-dat_2020$USA[dat_2020$Country=="USA"]<-1
-dat_2020$USA[is.na(dat_2020$USA)]<- 0
-
 # Canada
 dat_2020$Canada <- NA
 dat_2020$Canada[dat_2020$Country=="Canada"]<-1
