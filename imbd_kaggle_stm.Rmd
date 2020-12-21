@@ -3,7 +3,6 @@ title: "imdb_kaggle"
 output: html_document
 ---
 
-
 ```{r setup, include=FALSE}
 library(dplyr)
 library(quanteda)
@@ -17,52 +16,15 @@ library(igraph)
 library(openxlsx)
 library(data.table)
 library(naniar) 
-library(ca)
 library(plm) 
-library(stargazer)
 theme_set(theme_minimal())
 ```
 
 ## Data preparation
 
-We might want to delete this data chunk because we didn't do stuff with it in the end.
-
-```{r data trial 1}
-# Kaggle Data 1 - Has Revenue but not Country
-dat <- read.csv("data/imdb_1972-2019.csv")
-
-# Exploring the dataset
-names(dat)
-
-# Look at duplicates 
-dat %>% filter(duplicated(.[["Title"]]))
-
-# Selecting the variables we are going to use and remove duplicates
-# remove year and genre - we won't use them in our model
-dat1 <- dat %>% 
-  select(Title, Rating, Metascore, Description, Runtime..Minutes.,
-         Revenue..Millions.) %>% 
-  distinct(Title, .keep_all = TRUE)
-names(dat1)
-
-# Check for duplicates 
-dat1 %>% filter(duplicated(.[["Title"]])) 
-
-# convert factors to character columns  
-dat2 <- dat1 %>%
-  mutate_if(is.factor, as.character)
-
-# Check classes of columns
-sapply(dat2, class) 
-
-```
-
-``` {r kaggle data}
-#Kaggle Data 2 - Has Country but not Revenue (to complicated/lacking)
+``` {r Import kaggle data}
 # Note: Contains some 2020 films, but none of the ones we scraped
 kaggle <- read.csv("data/IMDb_movies.csv")
-#checking what is rating
-#kaggle_rating <- read.csv("data/IMDb_ratings.csv")
 
 # Exploring the dataset
 names(kaggle)
@@ -70,16 +32,9 @@ names(kaggle)
 # Selecting variables and remove duplicates 
 kaggle1 <- kaggle %>%
   select(title, country, avg_vote, description, duration) %>% 
-#  select(title, country, avg_vote, metascore, votes, description, usa_gross_income, duration) %>% 
   rename(rating=avg_vote) %>%
-#  rename(budget = usa_gross_income) %>%
   distinct(title, .keep_all = TRUE) # filter out any duplicates
-
 names(kaggle1)
-
-# Manage multiple and missing countries
-#kaggle1$country <- gsub(",.*$", "\\1", kaggle1$country) # keep first country 
-#kaggle1[which(kaggle1$country == ""),2] <-  NA # replace missing values with NA
 
 # convert factors to character columns  
 kaggle1 <- kaggle1 %>%
@@ -88,19 +43,19 @@ kaggle1 <- kaggle1 %>%
 # Check column classes
 sapply(kaggle1, class)
 
-# Remove movies with short descriptions due to STM conversion
+# Add NA to movies with short descriptions (based on STM req's)
 kaggle1[nchar(kaggle1$description) < 35, ] <- NA
 
 # Convert empty and non-English descriptions to NA
 kaggle1 <- kaggle1 %>%
   replace_with_na(replace = list(description = "", country = "")) %>%
-  replace_with_na(replace = list(title = c("Drei Mann in einem Boot", # as will films w/ non-eng descrip
+  replace_with_na(replace = list(title = c("Drei Mann in einem Boot", 
                                            "Tízezer nap",
                                            "Heintje - Einmal wird die Sonne wieder scheinen",
                                            "Az elvarázsolt dollár",
                                            "Szerelem elsö vérig")))
 
-# Remove movies with incomplete information
+# Remove movies with incomplete (NA) information
 kaggle2 <- na.omit(kaggle1)
 
 ```
@@ -119,9 +74,6 @@ dat_test <- total %>%
   rename(Budget = Revenue..Millions., Duration = Runtime..Minutes.)
 names(dat_test)
 
-# Keep first country 
-#dat_test$Country <- gsub(",.*$", "\\1", dat_test$Country)
-
 # Convert numeric to integer 
 colsnum <- c("Duration")
 dat_test[colsnum] <- sapply(dat_test[colsnum],as.integer)
@@ -133,6 +85,8 @@ dat2020 <- na.omit(dat_test)
 ## Structural Topic Model
 
 ```{r Initialize Corpus and dfm objects}
+######### Kaggle Data ################
+
 # Turn kaggle data into corpus
 corp_kaggle <- corpus(kaggle2, 
        text_field = "description",
@@ -176,11 +130,13 @@ corp_2020_dfm <- dfm(corp_2020,
 # "mod_demo" illustrates the process but "mod" will be used from here on
 
 corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
-# mod_demo <- stm(documents = corp_kaggle_stm$documents, 
-#            vocab = corp_kaggle_stm$vocab,
-#            K = 10, 
-#            data = corp_kaggle_stm$data,
-#            seed = 12345)
+
+# Create STM topic model
+mod_demo <- stm(documents = corp_kaggle_stm$documents,
+           vocab = corp_kaggle_stm$vocab,
+           K = 10,
+           data = corp_kaggle_stm$data,
+           seed = 12345)
 
 # Save model 
 #saveRDS(mod_demo, file = "data/topic_mod_demo.rds")
@@ -189,7 +145,6 @@ corp_kaggle_stm <- asSTMCorpus(corp_kaggle_dfm)
 ```{r Structural Topic Model Pt. 2 - import and continue}
 # Import model
 mod <- readRDS("data/topic_mod_v2.rds") 
-#mod <- mod_demo
 
 # Descriptive 
 summary(mod) 
@@ -239,9 +194,9 @@ thetas_2020 <- data.frame(nds$theta)
 colnames(thetas_2020) <- labels
 rownames(thetas_2020) <- paste(docvars(corp_2020_dfm)$Title)
 
-#probably not useful but cute!
-#plot(ca(thetas_kaggle))
 ```
+
+## Final creation of datasets
 
 ```{r combine thetas into full datasets}
 
@@ -256,14 +211,13 @@ thetas_2020 <- setDT(thetas_2020, keep.rownames = TRUE)
 names(thetas_2020)[1] <- "Title" 
 dat_2020 <- left_join(dat2020, thetas_2020, by = "Title")
 
-# Manage multiple countries
-dat_kaggle$country <- gsub(",.*$", "\\1", dat_kaggle$country) # keep first country 
+# Manage multiple countries - keep only first country
+dat_kaggle$country <- gsub(",.*$", "\\1", dat_kaggle$country) 
 dat_2020$Country <- gsub(",.*$", "\\1", dat_2020$Country)
 
-saveRDS(dat_kaggle, file = "data/dat_kaggle.rds")
-saveRDS(dat_2020, file = "data/dat_2020.rds")
-
-
+# Save datasets for analysis 
+#saveRDS(dat_kaggle, file = "data/dat_kaggle_demo.rds")
+#saveRDS(dat_2020, file = "data/dat_2020_demo.rds")
 
 ```
 
