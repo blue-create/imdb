@@ -18,7 +18,7 @@ theme_set(theme_minimal())
 # Kaggle data analyses
 
 ## Data preparation
-```{r prepare data, eval = FALSE}
+```{r prepare data}
 # Import data
 dat_kaggle <- readRDS("data/dat_kaggle.rds") 
 
@@ -226,7 +226,7 @@ stargazer(unit_fe_kaggle,
 
 ## Data preparation 
 
-``` {r prepare data }
+``` {r prepare scraped data }
 # Import scraped data 
 dat_2020 <- readRDS("data/dat_2020.rds")
 
@@ -247,7 +247,7 @@ dat_2020$Country <- as.factor(dat_2020$Country)
 ```
 
 ## Panel Data Estimation
-```{r plm, warning = FALSE}
+```{r scraped plm, warning = FALSE}
 # PLM
 unit_fe_2020 <- plm(Rating ~ Duration + Topic_1 + Topic_2 + 
                 Topic_3 + Topic_4 + Topic_5+ Topic_6 + 
