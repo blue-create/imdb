@@ -40,6 +40,8 @@ Word Count: 2.678
 
 Emails: 
 a.spertus-melhus@mpp.hertie-school.org , b.le@mpp.hertie-school.org , a.berjon-sanchez@mpp.hertie-school.org 
+<br> 
+GitHub Repository: https://github.com/adinaspertus/imdb
 <br>
 <br>
 <br>

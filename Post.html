@@ -1572,7 +1572,7 @@ table, td, th {
 </style>
 <p>This Data Analysis proposes models for predicting film quality based on certain metadata attributes and the text of the film’s IMDb description. We developed a topic model based on film descriptions from past years, and used this and other variables to develop models for predicting a film’s rating. We then tested the model’s validity on a set of freshly-scraped 2020 films. Ba Linh took the lead on text scraping, Anabel led the import and formatting the Kaggle data, and Adina focused on the topic model development. We were all actively involved in the final linear model development and testing.</p>
 <p>Word Count: 2.678</p>
-<p>Emails: <a href="mailto:a.spertus-melhus@mpp.hertie-school.org" class="email">a.spertus-melhus@mpp.hertie-school.org</a> , <a href="mailto:b.le@mpp.hertie-school.org" class="email">b.le@mpp.hertie-school.org</a> , <a href="mailto:a.berjon-sanchez@mpp.hertie-school.org" class="email">a.berjon-sanchez@mpp.hertie-school.org</a> <br> <br> <br></p>
+<p>Emails: <a href="mailto:a.spertus-melhus@mpp.hertie-school.org" class="email">a.spertus-melhus@mpp.hertie-school.org</a> , <a href="mailto:b.le@mpp.hertie-school.org" class="email">b.le@mpp.hertie-school.org</a> , <a href="mailto:a.berjon-sanchez@mpp.hertie-school.org" class="email">a.berjon-sanchez@mpp.hertie-school.org</a> <br> Github: <a href="https://github.com/adinaspertus/imdb" class="uri">https://github.com/adinaspertus/imdb</a> <br> <br> <br></p>
 <div id="process-overview" class="section level1">
 <h1>1. Process Overview</h1>
 <p>The overarching goal of our project was to develop models to help predict a movie’s quality. However, it’s hard to objectively judge a film’s “quality,” so in order to operationalize this variable, we relied on user-submitted film ratings (averaged on a scale of 1.0 – 10.0 stars) from the <a href="https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm">Internet Movie Database (IMDb)</a>. This database contains metadata on millions of films, TV titles, and video games, along with reviews provided by its tens of millions of users.</p>
@@ -1623,9 +1623,7 @@ We developed our topic model based on a large dataset of IMDb films dating back 
 <p>Based on each topic’s word bundles, we drew conclusions on which film “topics” it best fit with. For example, we concluded that Topic 1 correlated to battles, often of an intergalactic variety.</p>
 Next, we gave each film a score (theta) along each topic that indicated how well it fit into that category. As expected, the films “Guardians of the Galaxy” and “The Avengers” had their highest scores for any of the ten topics under Topic 1 (theta = 0.428 and 0.572, respectively). We also classified Topic 6 as associated with horror films, Topic 7 as associated with romance films, and Topic 9 as associated with crime films. (Other topics clearly showed similarities, but couldn’t be categorized as easily into specific genres, such as Topic 4. We don’t ascribe particular genres to these remaining topics.)
 <p>
-<p><strong>Topics and Associate Genres</strong></p>
-<pre class="r"><code>overview &lt;- readRDS(&quot;data/overview_topics.rds&quot;)
-#overview %&gt;% kbl()</code></pre>
+<p><strong>Topics and Associated Genres</strong></p>
 <p>
 <p>Lastly, we created a corpus of our recently scraped IMDb data and assessed these films from 2020 along the same topic groupings. In doing so, we were able to give each film a rating for how well it fit each of our pre-established ten topics. This information was attached to the final 2020 film dataset to be used in our analysis.</p>
 </div>
