@@ -24,7 +24,7 @@ library(stargazer)
 
 ``` {r }
 Topics <- paste0("Topic ", 1:10, "")
-Genres <- c("Battle", "Real-life setting", "Historical/Martial Arts", "French/Family", "5", "Horror", "Romance", "8", "Crime", "10")
+Genres <- c("Battle / Space War", "Life / Career", "Martial Arts / Historical", "Rural / Family / Historical", "Movies (?)", "Horror", "Romance", "Friendships (?)", "Crime", " (?)")
 
 overview <- data.frame(cbind(Topics, Genres)) %>% rename("Associated Genres" = Genres)
 saveRDS(overview, file = "data/overview_topics.rds")

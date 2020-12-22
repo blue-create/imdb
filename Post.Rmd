@@ -36,8 +36,6 @@ table, td, th {
 
 This Data Analysis proposes models for predicting film quality based on certain metadata attributes and the text of the film’s IMDb description. We developed a topic model based on film descriptions from past years, and used this and other variables to develop models for predicting a film’s rating. We then tested the model’s validity on a set of freshly-scraped 2020 films. Ba Linh took the lead on text scraping, Anabel led the import and formatting the Kaggle data, and Adina focused on the topic model development. We were all actively involved in the final linear model development and testing.
 
-Word Count: 2.678 
-
 Emails: 
 a.spertus-melhus@mpp.hertie-school.org , b.le@mpp.hertie-school.org , a.berjon-sanchez@mpp.hertie-school.org 
 <br> 
@@ -111,15 +109,15 @@ knitr::include_graphics("data/topic_plot.png")
 
 Based on each topic’s word bundles, we drew conclusions on which film “topics” it best fit with. For example, we concluded that Topic 1 correlated to battles, often of an intergalactic variety.  
 
-Next, we gave each film a score (theta) along each topic that indicated how well it fit into that category. As expected, the films “Guardians of the Galaxy” and “The Avengers” had their highest scores for any of the ten topics under Topic 1 (theta = 0.428 and 0.572, respectively). We also classified Topic 6 as associated with horror films, Topic 7 as associated with romance films, and Topic 9 as associated with crime films. (Other topics clearly showed similarities, but couldn’t be categorized as easily into specific genres, such as Topic 4. We don’t ascribe particular genres to these remaining topics.) 
-<p>
-**Topics and Associated Genres**
+Next, we gave each film a score (theta) along each topic that indicated how well it fit into that category. As expected, the films “Guardians of the Galaxy” and “The Avengers” had their highest scores for any of the ten topics under Topic 1 (theta = 0.428 and 0.572, respectively). We also classified Topic 6 as associated with horror films, Topic 7 as associated with romance films, and Topic 9 as associated with crime films. (Other topics clearly showed similarities, but couldn’t be categorized as easily into specific genres, such as Topic 4.) 
+
+</center>**Possibly Associated Genres**</center>
 
 ```{r, echo = FALSE}
 overview <- readRDS("data/overview_topics.rds")
 overview %>% kbl()
 ```
-<p>
+
 Lastly, we created a corpus of our recently scraped IMDb data and assessed these films from 2020 along the same topic groupings. In doing so, we were able to give each film a rating for how well it fit each of our pre-established ten topics. This information was attached to the final 2020 film dataset to be used in our analysis.  
 
 # 5. Model Development and Results
