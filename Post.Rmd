@@ -78,10 +78,10 @@ Topic models are “statistical algorithms that analyze words in original text d
 We developed our topic model based on a large dataset of IMDb films dating back to 1894. After we selected films that contained data on our variables of interest (title, country of origin, description, and runtime) and removed any duplicates or non-English text, we were left with 79474 films to build our topic model from. We cleaned the text descriptions to remove words that don’t provide useful information like “the” and “and”. Next, we developed a corpus, which provides information on how many times each word appears in each film’s description. Using the STM package, we generated ten “topic” groupings based on the film’s description, as follows:  
 <p>
 <center>**Summary of the Topic Model**</center>
-```{r}
+```{r, results = 'asis', echo = FALSE}
 mod <- readRDS("data/topic_mod_v2.rds")
 summary(mod) 
-library(prettydoc)
+#library(prettydoc)
 ```
 <p>
 #### Note on the different categories: 
@@ -101,7 +101,7 @@ Next, we gave each film a score (theta) along each topic that indicated how well
 
 ```{r}
 overview <- readRDS("data/overview_topics.rds")
-overview %>% kbl()
+#overview %>% kbl()
 ```
 <p>
 Lastly, we created a corpus of our recently scraped IMDb data and assessed these films from 2020 along the same topic groupings. In doing so, we were able to give each film a rating for how well it fit each of our pre-established ten topics. This information was attached to the final 2020 film dataset to be used in our analysis.  
@@ -120,7 +120,7 @@ In this section we lay out the findings of the specific questions we explored.
 <p>
 <div align="center">
 
-```{r, warning = FALSE, results = 'asis'}
+```{r, warning = FALSE, results = 'asis', echo = FALSE}
 model1 <- readRDS("Tables/topics_only_model.rds") 
 stargazer(model1, type = "html", 
           title = "Topic Model: Which Topics have better ratings?", 
@@ -140,7 +140,7 @@ stargazer(model1, type = "html",
 <p>
 
 
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2 <- readRDS("Tables/country_model.rds")
 stargazer(model2, type = "html",  
           title = "Country Model: USA, India, UK, Canada and France", 
@@ -161,7 +161,7 @@ stargazer(model2, type = "html",
 <p>
 
 
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model3 <- readRDS("Tables/duration_model.rds")
 model3_india <- readRDS("Tables/india_len_model.rds")
 stargazer(model3, model3_india, 
@@ -206,7 +206,7 @@ stargazer(model3, model3_india,
 + However, although South Korean Horror films have the highest predicted rating out of the three countries (6.685), due to the lack of significant results (p = 0.01) for a country-horror interaction effect in Sweden or Japan, we avoid drawing conclusions on the superior horror producer.  
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model5_sk <- readRDS("Tables/sk_horror_model.rds")
 model5_sw <- readRDS("Tables/sweden_horror_model.rds")
 model5_j <- readRDS("Tables/japan_horror_model.rds")
@@ -230,7 +230,7 @@ stargazer(model5_sk, model5_sw, model5_j,
 + Results: Contrary to our assumption, French romances have a statistically significant, negative effect on the rating. On the other hand, rating increases if a British movie turns out to be a romance. We should note however that while non-romance films from France out-perform British films in rating, these results barely miss the threshold for significance for the UK. 
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model6_fr_ro <- readRDS("Tables/france_romance_model.rds")
 model6_uk_ro <- readRDS("Tables/uk_romance_model.rds")
 stargazer(model6_fr_ro, model6_uk_ro,
@@ -251,7 +251,7 @@ stargazer(model6_fr_ro, model6_uk_ro,
 
 + Results: Contrary to our prediction, Danish horror films have a higher predicted rating than Swedish ones. It should be noted that the interaction effect for Swedish horror films was small and statistically insignificant, compared to the much larger and statistically significant effect for Danish horror.
 
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model7_dm <- readRDS("Tables/denmark_crime_model.rds")
 model7_sw <- readRDS("Tables/sweden_crime_models.rds")
 stargazer(model7_dm, model7_sw,
@@ -273,7 +273,7 @@ stargazer(model7_dm, model7_sw,
 
 As a second step, we attempted to verify some of our results from the 2020 scraped data. Because we only scraped 100 films, our testing abilities were limited. Nonetheless, we tested whether the following effects held on the more recent data. 
 
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model8_us_crime <- readRDS("Tables/usa_crime_model.rds")
 model8_us_battle <- readRDS("Tables/usa_battle_model.rds")
 stargazer(model8_us_crime, model8_us_battle,
@@ -295,7 +295,7 @@ stargazer(model8_us_crime, model8_us_battle,
 + Results: Presumably due to the small sample size, we did not find significant results in this area.   
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2020_1 <- readRDS("Tables/topics_scraped_model.rds")
 stargazer(model2020_1, 
           type = "html",  
@@ -316,7 +316,7 @@ stargazer(model2020_1,
 + Results: The substantially small but statistically significant positive correlation between duration and rating among 2020 films supports the hypothesis.  
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2020_2 <- readRDS("Tables/duration_model_2020.rds")
 stargazer(model2020_2, 
           type = "html",  
@@ -338,7 +338,7 @@ stargazer(model2020_2,
 + Results: Unfortunately, there was not sufficient data on British romance films to achieve significant results. However, the model suggests that on the 2020 dataset, Britain’s romance films were actually worse than their non-romance films. 
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2020_3 <- readRDS("Tables/uk_romance_model_2020.rds")
 stargazer(model2020_3,
           type = "html", 
@@ -359,7 +359,7 @@ stargazer(model2020_3,
 + Results: While we did not find significant results, our hypothesis held for Crime films, but not Battle films (which had a negative interaction effect when from the US). 
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2020_4_uscrime <- readRDS("Tables/usa_crime_model_2020.rds")
 model2020_4_usbat <- readRDS("Tables/usa_battle_model_2020.rds")
 stargazer(model2020_4_uscrime, model2020_4_usbat,
@@ -382,7 +382,7 @@ stargazer(model2020_4_uscrime, model2020_4_usbat,
 + Result: The intercept and the topic coefficient estimates changed but the coefficient estimates stay statistically insignificant. 
 
 <p>
-```{r, results = 'asis', warning = FALSE}
+```{r, results = 'asis', warning = FALSE, echo = FALSE}
 model2020_5 <- readRDS("Tables/unit_fe_2020.rds")
 stargazer(model2020_5, model2020_1,
           type = "html", 
