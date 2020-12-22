@@ -1,7 +1,7 @@
 ---
 title: " Using IMDb data to predict movie quality"
 author: "Anabel Berjón Sánchez, Ba Linh Le, Adina Spertus-Melhus"
-date: "18/12/2020"
+date: "23/12/2020"
 output:
   html_document:
     theme: paper
@@ -36,7 +36,7 @@ table, td, th {
 
 This Data Analysis proposes models for predicting film quality based on certain metadata attributes and the text of the film’s IMDb description. We developed a topic model based on film descriptions from past years, and used this and other variables to develop models for predicting a film’s rating. We then tested the model’s validity on a set of freshly-scraped 2020 films. Ba Linh took the lead on text scraping, Anabel led the import and formatting the Kaggle data, and Adina focused on the topic model development. We were all actively involved in the final linear model development and testing.
 
-Word Count: 2.769 
+Word Count: 2.678 
 
 Emails: 
 a.spertus-melhus@mpp.hertie-school.org , b.le@mpp.hertie-school.org , a.berjon-sanchez@mpp.hertie-school.org 
@@ -46,78 +46,76 @@ a.spertus-melhus@mpp.hertie-school.org , b.le@mpp.hertie-school.org , a.berjon-s
 
 # 1. Process Overview 
 
-The overarching goal of our project was to develop models to help predict a movie’s quality.  However, it’s hard to objectively judge a film’s “quality,” so in order to operationalize this variable, we relied on user-submitted film ratings (averaged on a scale of 1.0 – 10.0 stars) from the Internet Movie Database (IMDb). This database contains metadata on millions of films, TV titles, and video games, along with reviews provided by its tens of millions of users.  
+The overarching goal of our project was to develop models to help predict a movie’s quality.  However, it’s hard to objectively judge a film’s “quality,” so in order to operationalize this variable, we relied on user-submitted film ratings (averaged on a scale of 1.0 – 10.0 stars) from the [Internet Movie Database (IMDb)](https://www.imdb.com/chart/moviemeter/?ref_=nv_mv_mpm). This database contains metadata on millions of films, TV titles, and video games, along with reviews provided by its tens of millions of users.  
 
 To predict a film’s rating, we gathered information available from each film’s IMDb page to be used as independent model variables: film runtime in minutes, country of origin, and plot description. To incorporate a film’s description into our predictive model, we developed a topic model that analysed every film’s description and generated 10 different topic categories based on word associations. This provided 10 additional quantitative variables: how much each film fit into any of the given topic categories.  
 
-We trained our predictive model on a list of 79,474 films downloaded from the IMDb movies extensive dataset scraped by Stefano Leone. (citation) However, to test the validity of our model on more recent films, we also scraped the top 100 most popular 2020 films from IMDb. This list was selected due to the wide distribution of ratings compared to other 2020-based IMDb lists; “popular” is not the same thing as “highly rated” on IMDb. The details of our data collection, topic modelling, predictive model development, and final results are described further below.  
+We trained our predictive model on a list of 79,474 films downloaded from the [IMDb movies extensive dataset](https://www.kaggle.com/stefanoleone992/imdb-extensive-dataset). However, to test the validity of our model on more recent films, we also scraped the top 100 [most popular 2020 films](https://www.imdb.com/search/title/?year=2020&title_type=feature&) from IMDb. The details of our data collection, topic modelling, predictive model development, and final results are described further below.  
 
 # 2. Research Questions
 
 While our goal was to develop a predictive model for a film’s rating, we focused on several sub-questions to help us get there. Specifically: 
 
-+ `Which film “topics” are associated with higher ratings, based on the film’s IMDb description? Specifically, are Romance movies and Action movies associated with higher ratings?`  
++ _Which film “topics” are associated with higher ratings, based on the film’s IMDb description? Specifically, are Romance movies and Action movies associated with higher ratings?_  
 
-+ `Which country’s films are most highly rated if we were to compare movies from Canada, India, the UK, and the US?`  
++ _Which country’s films are most highly rated if we were to compare movies from Canada, India, the UK, and the US?_  
 
-+ `Do longer films get higher or lower ratings? What if a film is from India?` 
++ _Do longer films get higher or lower ratings? What if a film is from India?_ 
 
-+ `How does the effect of each topic on rating change when we hold country as a fixed effect constant?` 
++ _How does the effect of each topic on rating change when we hold country as a fixed effect constant?_ 
 
-Additionally, the following research questions were developed after the topic model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to topics 1, 6, 7, and 9 (respectively).  
+Additionally, the following research questions were developed after the topic model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to Topics 1, 6, 7, and 9 (respectively).  
 
-+ `Considering South Korea, Sweden, and Japan, three countries with a reputation for macabre cinema, who makes the best horror films?`  
++ _Considering South Korea, Sweden, and Japan, three countries with a reputation for macabre cinema, who makes the best horror films?_  
 
-+ `Does France or the UK make better romance films?`   
++ _Does France or the UK make better romance films?_   
 
-+ `Does Denmark or Sweden make better crime films?` 
++ _Does Denmark or Sweden make better crime films?_ 
 
-+ `How do Crime films and Battle (especially of the intergalactic variety) films from the US compare in quality to other films from the US, as well as Crime and Battle films from other countries?` 
++ _How do Crime films and Battle (especially of the intergalactic variety) films from the US compare in quality to other films from the US, as well as Crime and Battle films from other countries?_ 
 
 # 3. Data
 ##  3.1 Scraped Data
 
-The test data for our predictive model was scraped from this list on IMDb (https://www.imdb.com/search/title/?year=2020&title_type=feature&), which is called “Feature Film, Released between 2020-01-01 and 2020-12-31 (Sorted by Popularity Ascending)". Because we wanted to include at least 100 movies, two pages, each containing 50 movies, had to be scraped.  
+The test data for our predictive model was scraped from IMDb’s [Feature Film, Released between 2020-01-01 and 2020-12-31 (Sorted by Popularity Ascending)](https://www.imdb.com/search/title/?year=2020&title_type=feature&) list . (This list was selected due to the wide distribution of ratings compared to other 2020-based IMDb lists; “popular” is not the same thing as “highly rated” on IMDb.) Because we wanted to include at least 100 movies, two pages, each containing 50 movies, had to be scraped. 
 
 Two methods were used for this process. The first method worked with the data that was already available in the list: title, year, actors, directors, and votes. The second method required a function that vectorizing a list of IMDb links, scraped the HMTL content from a given URL, called the node based on a specified xpath, and extracted attributes, text and tag names from that html node. This method had to be used for the following information: description, genre, plot keywords, country, gross, production company, runtime, rating, and meta score. 
 
 After the extraction of the data, a cleaning process followed. In the end, the separate data frames were adjusted to fit the nature of the training dataset and combined to create the finished test dataset.  
 
-##  3.2 Scraped Data
-The data to build our predictive model was downloaded from Kaggle. Among several datasets of scraped IMDb data, we first started to work with a dataset provided by Satkar. We then realize it lacked specific variables that would be useful for our predictive model, like country of origin. We then chose to work with a different dataset provided by Stefano Leone based on its variables and size. The movies dataset includes 85,855 movies (all  with more than 100 votes as of 01/01/2020) with attributes such as movie description, average rating, number of votes, genre, etc.  
+##  3.2 Kaggle Data
+The data to build our predictive model was downloaded from Kaggle. Among several datasets of scraped IMDb data, we first started to work with Satkar’s [IMDB_movie_1972-2019 dataset](https://www.kaggle.com/satkarjain/imdb-movie-19722019). We then realize it lacked specific variables that would be useful for our predictive model, like country of origin. Subsequently, we chose to work with Stefano Leone’s [IMDb movies extensive dataset](https://www.kaggle.com/stefanoleone992/imdb-extensive-dataset) based on its variables and size. This dataset includes 85,855 movies (all  with more than 100 votes as of 01/01/2020) with attributes such as movie description, average rating, number of votes, genre, etc. 
 
 Using Kaggle data to build our model gave us the advantage of a large, tidy training dataset. After downloading and cleaning it, we adapted the data frame to contain the same variables as the scraped data, leaving us with 79,484 films to build our topic model and regressions from. 
 
 # 4. Topic Model
-Topic models are “statistical algorithms that analyze words in original text documents to uncover the thematic structure of the both the corpus and individual documents themselves” (CFSS, 2020). The benefit of topic models is that they do not require hand-coding of text material, because this categorization is derived from the model’s analysis of the text alone. 
+Topic models are “statistical algorithms that analyze words in original text documents to uncover the thematic structure of the both the corpus and individual documents themselves” ([CFSS](https://cfss.uchicago.edu/notes/topic-modeling/), 2020). The benefit of topic models is that they do not require hand-coding of text material, because this categorization is derived from the model’s analysis of the text alone. 
 
 We developed our topic model based on a large dataset of IMDb films dating back to 1894. After we selected films that contained data on our variables of interest (title, country of origin, description, and runtime) and removed any duplicates or non-English text, we were left with 79474 films to build our topic model from. We cleaned the text descriptions to remove words that don’t provide useful information like “the” and “and”. Next, we developed a corpus, which provides information on how many times each word appears in each film’s description. Using the STM package, we generated ten “topic” groupings based on the film’s description, as follows:  
 <p>
-<center>**Summary of the Topic Model**</center>
-```{r, results = 'asis', echo = FALSE}
+
+
+```{r, echo = FALSE}
 mod <- readRDS("data/topic_mod_v2.rds")
-summary(mod) 
-#library(prettydoc)
+
 ```
-<p>
-#### Note on the different categories: 
-+ *Highest Prob* returns the words with the highest probability of indicating this topic. 
 
-+ *FREX* weights words by their overall frequency and how exclusive they are to the topic. 
+<center>**Top 10 Words with Highest Probability of Indicating each Topic**</center>
 
-+ *Lift* weights words by dividing by their frequency in other topics, therefore giving higher weight to words that appear less frequently in other topics. 
+```{r, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("data/topic_plot.png")
+```
 
-+ *Score* operates similarly to lift, dividing the log frequency of the word in the topic by the log frequency of the word in other topics.
 
 Based on each topic’s word bundles, we drew conclusions on which film “topics” it best fit with. For example, we concluded that Topic 1 correlated to battles, often of an intergalactic variety.  
 
 Next, we gave each film a score (theta) along each topic that indicated how well it fit into that category. As expected, the films “Guardians of the Galaxy” and “The Avengers” had their highest scores for any of the ten topics under Topic 1 (theta = 0.428 and 0.572, respectively). We also classified Topic 6 as associated with horror films, Topic 7 as associated with romance films, and Topic 9 as associated with crime films. (Other topics clearly showed similarities, but couldn’t be categorized as easily into specific genres, such as Topic 4. We don’t ascribe particular genres to these remaining topics.) 
 <p>
-**Topics and Associate Genres**
+**Topics and Associated Genres**
 
-```{r}
+```{r, echo = FALSE}
 overview <- readRDS("data/overview_topics.rds")
-#overview %>% kbl()
+overview %>% kbl()
 ```
 <p>
 Lastly, we created a corpus of our recently scraped IMDb data and assessed these films from 2020 along the same topic groupings. In doing so, we were able to give each film a rating for how well it fit each of our pre-established ten topics. This information was attached to the final 2020 film dataset to be used in our analysis.  
@@ -130,7 +128,7 @@ In this section we lay out the findings of the specific questions we explored.
 
 #### 1. Which film “topics” are associated with higher ratings, based on the film’s IMDb description? 
 
-+ Hypothesis: Based on the film’s IMDb description, Romance (topic 7) and Action-associated topics (Topics 1 and 9) will be associated with higher ratings.  
++ Hypothesis: Based on the film’s IMDb description, Romance (Topic 7) and Action-associated topics (Topics 1 and 9) will be associated with higher ratings.  
 
 + Result: Action-associated topics are associated with a decreasing effect on rating, whereas Romances are associated with an increasing effect on rating. The coefficients are statistically significant.  
 <p>
@@ -415,6 +413,7 @@ stargazer(model2020_5, model2020_1,
 
 Ultimately, we were not able to validate many specific aspects of the model using our small sample of 2020 films, other than the positive correlation between film length and rating. Nonetheless, we demonstrate how one could scrape more recent IMDb data and apply it to existing models in order to validate the findings based on previous years. 
 
+<p>
 
 # 6.Conclusion
 **In summary, each of our findings provides a small bit of insight into a particular dimension of how to predict a film’s quality. In the future, such insights could all go into a more robust algorithm for predicting a film’s quality based on various aspects of its metadata, including the text in its description.**
