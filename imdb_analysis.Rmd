@@ -1,5 +1,6 @@
 ---
 title: "Analysis"
+author: "Anabel Berjón Sánchez   Ba Linh Le   Adina Spertus-Melhus"
 output: rmdformats::downcute
 ---
 
