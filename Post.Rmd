@@ -1,6 +1,6 @@
 ---
 title: " Using IMDb data to predict movie quality"
-author: "Anabel Berjón Sánchez   Ba Linh Le   Adina Spertus-Melhus"
+author: "Anabel Berjón Sánchez, Ba Linh Le, Adina Spertus-Melhus"
 date: "18/12/2020"
 output:
   html_document:
@@ -13,6 +13,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(stargazer)
+library(kableExtra)
 ```
 
 This Data Analysis proposes models for predicting film quality based on certain metadata attributes and the text of the film’s IMDb description. We developed a topic model based on film descriptions from past years, and used this and other variables to develop models for predicting a film’s rating. We then tested the model’s validity on a set of freshly-scraped 2020 films. Ba Linh took the lead on text scraping, Anabel led the import and formatting the Kaggle data, and Adina focused on the topic model development. We were all actively involved in the final linear model development and testing.
@@ -75,7 +78,8 @@ We developed our topic model based on a large dataset of IMDb films dating back 
 <p>
 <center>**Summary of the Topic Model**</center>
 ```{r}
-#summary(mod)
+mod <- readRDS("data/topic_mod_v2.rds")
+summary(mod) 
 library(prettydoc)
 ```
 <p>
@@ -92,10 +96,11 @@ Based on each topic’s word bundles, we drew conclusions on which film “topic
 
 Next, we gave each film a score (theta) along each topic that indicated how well it fit into that category. As expected, the films “Guardians of the Galaxy” and “The Avengers” had their highest scores for any of the ten topics under Topic 1 (theta = 0.428 and 0.572, respectively). We also classified Topic 6 as associated with horror films, Topic 7 as associated with romance films, and Topic 9 as associated with crime films. (Other topics clearly showed similarities, but couldn’t be categorized as easily into specific genres, such as Topic 4. We don’t ascribe particular genres to these remaining topics.) 
 <p>
-<center>**Topics and Associate Genres**</center>
-<div align="center">
+**Topics and Associate Genres**
+
 ```{r}
-#(table of topics and associated genres)
+overview <- readRDS("data/overview_topics.rds")
+overview %>% kbl()
 ```
 <p>
 Lastly, we created a corpus of our recently scraped IMDb data and assessed these films from 2020 along the same topic groupings. In doing so, we were able to give each film a rating for how well it fit each of our pre-established ten topics. This information was attached to the final 2020 film dataset to be used in our analysis.  
@@ -113,11 +118,17 @@ In this section we lay out the findings of the specific questions we explored.
 + Result: Action-associated topics are associated with a decreasing effect on rating, whereas Romances are associated with an increasing effect on rating. The coefficients are statistically significant.  
 <p>
 <div align="center">
-```{r}
-#[insert summary(mod)] 
-#[insert topics_only_model stargazer] 
 
-readRDS("Tables/topics_only_model.rds")
+```{r, warning = FALSE, results = 'asis'}
+model1 <- readRDS("Tables/topics_only_model.rds") 
+stargazer(model1, type = "html", 
+          title = "Topic Model: Which Topics have better ratings?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 #### 2. Which country’s films are most highly rated? We look specifically at films from: Canada, India, the UK, and the US.  
@@ -126,8 +137,18 @@ readRDS("Tables/topics_only_model.rds")
 
 + Result: Indian movies are associated with the highest effect on rating, followed by decreasing effects on rating from British, American and lastly, Canadian movies. However, only the coefficients of American and Canadian movies are substantially significant (> 0.26).  
 <p>
-```{r}
-#[insert country_model stargazer]
+
+
+```{r, results = 'asis', warning = FALSE}
+model2 <- readRDS("Tables/country_model.rds")
+stargazer(model2, type = "html",  
+          title = "Country Model: USA, India, UK, Canada and France", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -137,8 +158,20 @@ readRDS("Tables/topics_only_model.rds")
 
 + Result: In contradiction to our prediction, we found that longer films are associated with a slightly higher ratings, however when films are from India, a longer film is associated with a slightly lower rating.  
 <p>
-```{r}
-#[insert india_len_model stargazer
+
+
+```{r, results = 'asis', warning = FALSE}
+model3 <- readRDS("Tables/duration_model.rds")
+model3_india <- readRDS("Tables/india_len_model.rds")
+stargazer(model3, model3_india, 
+          type = "html", 
+          title = "Duration Models", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Duration model", "Indian duration model"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -147,6 +180,19 @@ readRDS("Tables/topics_only_model.rds")
 + Hypothesis: The basic topics model is suffering from omitted variable bias, which we remedy by focusing on within country variation. Therefore, we will observe changes in the coefficient estimates.  
 
 + Result: The intercept and the topic coefficient estimates changed. Therefore, we must suspect that OVB. However, holding only country constant presumes that the quality of country-specific productions stayed constant. However, this assumption might be unreasonable, given that some countries are as old as 1894. The results should be taken with a grain of salt.
+
+```{r, results = 'asis', warning = FALSE}
+# model4 <- readRDS("Tables/unit_fe_kaggle.rds")
+# stargazer(model1, model4,
+#           type = "html",  
+#           title = "Comparison between Topics and FE Topics Model", 
+#           omit.stat=c("LL","ser","f","adj.rsq"), 
+#           dep.var.labels.include = FALSE,
+#           column.labels = c("Topics Model", " FE Topics Model"),
+#           header = FALSE,
+#           single.row = TRUE, 
+#           column.sep.width = "3pt")
+```
 
 *Note: The following hypothesis were developed after the model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to topics 1, 6, 7, and 9 (respectively).*
 
@@ -159,8 +205,20 @@ readRDS("Tables/topics_only_model.rds")
 + However, although South Korean Horror films have the highest predicted rating out of the three countries (6.685), due to the lack of significant results (p = 0.01) for a country-horror interaction effect in Sweden or Japan, we avoid drawing conclusions on the superior horror producer.  
 
 <p>
-```{r}
-#insert stargazer of sk_horror_model, sweden_horror_model, japan_horror_model 
+```{r, results = 'asis', warning = FALSE}
+model5_sk <- readRDS("Tables/sk_horror_model.rds")
+model5_sw <- readRDS("Tables/sweden_horror_model.rds")
+model5_j <- readRDS("Tables/japan_horror_model.rds")
+stargazer(model5_sk, model5_sw, model5_j,
+          type = "html",
+          title = "Who Makes Better Horror Movies? South Korea vs.Sweden", 
+          omit.stat=c("LL","ser","f","adj.rsq"),
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in SK", 
+          "Rating in Sweden", "Rating in Japan"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -171,8 +229,18 @@ readRDS("Tables/topics_only_model.rds")
 + Results: Contrary to our assumption, French romances have a statistically significant, negative effect on the rating. On the other hand, rating increases if a British movie turns out to be a romance. We should note however that while non-romance films from France out-perform British films in rating, these results barely miss the threshold for significance for the UK. 
 
 <p>
-```{r}
-#insert stargazer of france_romance_model, uk_romance_model 
+```{r, results = 'asis', warning = FALSE}
+model6_fr_ro <- readRDS("Tables/france_romance_model.rds")
+model6_uk_ro <- readRDS("Tables/uk_romance_model.rds")
+stargazer(model6_fr_ro, model6_uk_ro,
+          type = "html", 
+          title = "Who Makes Better Romance Movies? France vs.UK", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in France", "Rating in UK"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -182,6 +250,20 @@ readRDS("Tables/topics_only_model.rds")
 
 + Results: Contrary to our prediction, Danish horror films have a higher predicted rating than Swedish ones. It should be noted that the interaction effect for Swedish horror films was small and statistically insignificant, compared to the much larger and statistically significant effect for Danish horror.
 
+```{r, results = 'asis', warning = FALSE}
+model7_dm <- readRDS("Tables/denmark_crime_model.rds")
+model7_sw <- readRDS("Tables/sweden_crime_models.rds")
+stargazer(model7_dm, model7_sw,
+          type = "html", 
+          title = "Who Makes Better Police Movies? Denmark vs.Sweden", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in Denmark", "Rating in Sweden"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
+```
+
 #### 8. How do Battle films (especially of the intergalactic variety; Topic 1) and Crime films (Topic 9) from the US compare in quality to other films from the US, as well as Battle and Crime films from other countries? 
 
 + Hypothesis: Battle and Crime movies will both be more highly rated when they are from the US and they will do better than other US films because the US specializes in these type of violent action genres. 
@@ -190,6 +272,21 @@ readRDS("Tables/topics_only_model.rds")
 
 As a second step, we attempted to verify some of our results from the 2020 scraped data. Because we only scraped 100 films, our testing abilities were limited. Nonetheless, we tested whether the following effects held on the more recent data. 
 
+```{r, results = 'asis', warning = FALSE}
+model8_us_crime <- readRDS("Tables/usa_crime_model.rds")
+model8_us_battle <- readRDS("Tables/usa_battle_model.rds")
+stargazer(model8_us_crime, model8_us_battle,
+          type = "html", 
+          title = "USA: Crime & Battle Movies", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating of Crime Movies", 
+          "Rating of Battle Movies"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
+```
+
 #### 1. Which topics are associated with higher ratings in 2020? 
 
 + Hypothesis: We expect Topics 4, 7 (Romance), and 3 to be associated with the highest scores, and Topics 6, 8, 1 (Battle), and 9 (Crime) to have the lowest scores.  
@@ -197,8 +294,17 @@ As a second step, we attempted to verify some of our results from the 2020 scrap
 + Results: Presumably due to the small sample size, we did not find significant results in this area.   
 
 <p>
-```{r}
-#insert topic model
+```{r, results = 'asis', warning = FALSE}
+model2020_1 <- readRDS("Tables/topics_scraped_model.rds")
+stargazer(model2020_1, 
+          type = "html",  
+          title = "Topic Model 2020: Which Topics have better ratings?", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -209,8 +315,17 @@ As a second step, we attempted to verify some of our results from the 2020 scrap
 + Results: The substantially small but statistically significant positive correlation between duration and rating among 2020 films supports the hypothesis.  
 
 <p>
-```{r}
-#insert rating model
+```{r, results = 'asis', warning = FALSE}
+model2020_2 <- readRDS("Tables/duration_model_2020.rds")
+stargazer(model2020_2, 
+          type = "html",  
+          title = "Duration Model for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -222,8 +337,17 @@ As a second step, we attempted to verify some of our results from the 2020 scrap
 + Results: Unfortunately, there was not sufficient data on British romance films to achieve significant results. However, the model suggests that on the 2020 dataset, Britain’s romance films were actually worse than their non-romance films. 
 
 <p>
-```{r}
-#insert stargazer(uk_romance_model_2020  
+```{r, results = 'asis', warning = FALSE}
+model2020_3 <- readRDS("Tables/uk_romance_model_2020.rds")
+stargazer(model2020_3,
+          type = "html", 
+          title = "British Romance Films for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating in UK"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -234,8 +358,19 @@ As a second step, we attempted to verify some of our results from the 2020 scrap
 + Results: While we did not find significant results, our hypothesis held for Crime films, but not Battle films (which had a negative interaction effect when from the US). 
 
 <p>
-```{r}
-#insert usa model 
+```{r, results = 'asis', warning = FALSE}
+model2020_4_uscrime <- readRDS("Tables/usa_crime_model_2020.rds")
+model2020_4_usbat <- readRDS("Tables/usa_battle_model_2020.rds")
+stargazer(model2020_4_uscrime, model2020_4_usbat,
+          type = "html",
+          title = "USA: Crime & Battle Movies for 2020", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Rating of Crime Movies", 
+          "Rating of Battle Movies"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 
@@ -246,8 +381,17 @@ As a second step, we attempted to verify some of our results from the 2020 scrap
 + Result: The intercept and the topic coefficient estimates changed but the coefficient estimates stay statistically insignificant. 
 
 <p>
-```{r}
-#insert fixed effect model  
+```{r, results = 'asis', warning = FALSE}
+model2020_5 <- readRDS("Tables/unit_fe_2020.rds")
+stargazer(model2020_5, model2020_1,
+          type = "html", 
+          title = "Comparison between 2020 Topics Model and 2020 FE Topics Model", 
+          omit.stat=c("LL","ser","f","adj.rsq"), 
+          dep.var.labels.include = FALSE,
+          column.labels = c("Topics Model", "FE Topics Model"),
+          header = FALSE,
+          single.row = TRUE, 
+          column.sep.width = "3pt")
 ```
 <p>
 

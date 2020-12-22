@@ -1,7 +1,12 @@
 ---
 title: "Analysis"
-author: "Anabel Berjón Sánchez   Ba Linh Le   Adina Spertus-Melhus"
-output: rmdformats::downcute
+author: "Anabel Berjón Sánchez, Ba Linh Le, Adina Spertus-Melhus"
+output:
+    html_document:
+    theme: paper
+    toc: yes
+    toc_float:
+      collapsed: false
 ---
 
 # Setup
@@ -14,6 +19,18 @@ library(plm)
 library(stringr)
 library(stargazer)
 ```
+
+# Topics overview
+
+``` {r }
+Topics <- paste0("Topic ", 1:10, "")
+Genres <- c("Battle", "Real-life setting", "Historical/Martial Arts", "French/Family", "5", "Horror", "Romance", "8", "Crime", "10")
+
+overview <- data.frame(cbind(Topics, Genres)) %>% rename("Associated Genres" = Genres)
+saveRDS(overview, file = "data/overview_topics.rds")
+overview
+```
+
 
 # Kaggle data analyses
 
@@ -44,10 +61,11 @@ topics_only_model <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 +
                       Topic_4 + Topic_5+  Topic_6 + Topic_7 + 
                       Topic_8 + Topic_9 + Topic_10, data = dat_kaggle)
 summary(topics_only_model)
+saveRDS(topics_only_model, file = "Tables/topics_only_model.rds")
 ```
 
 ```{r, results = 'asis', warning = FALSE}
-stargazer(topics_only_model, type = "html", out = "Table1.html", 
+stargazer(topics_only_model, type = "html",
           title = "Topic Model: Which Topics have better ratings?", 
           omit.stat=c("LL","ser","f","adj.rsq"), #omit character vector
           dep.var.labels.include = FALSE,
@@ -89,10 +107,11 @@ dat_kaggle$France[is.na(dat_kaggle$France)]<- 0
 country_model <- lm(rating ~ USA + India + UK + Canada + 
                 France, data = dat_kaggle)
 summary(country_model)
+saveRDS(country_model, file = "Tables/country_model.rds")
 ```
 
 ```{r, results = 'asis', warning = FALSE}
-stargazer(country_model, type = "html", out = "Table2.html", 
+stargazer(country_model, type = "html",  
           title = "Country Model: USA, India, UK, Canada and France", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -108,11 +127,12 @@ stargazer(country_model, type = "html", out = "Table2.html",
 # Duration Model
 duration_model <- lm(rating ~ duration, data = dat_kaggle)
 summary(duration_model)
+saveRDS(duration_model, file = "Tables/duration_model.rds")
 # Note: longer films have higher ratings
 ```
 
 ```{r, results = 'asis', warning = FALSE}
-stargazer(duration_model, type = "html", out = "Table3.html", 
+stargazer(duration_model, type = "html", 
           title = "Duration Model", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -148,13 +168,18 @@ summary(sweden_horror_model)
 
 japan_horror_model <- lm(rating ~ Japan*Topic_6, data = dat_kaggle)
 summary(japan_horror_model)
+
+saveRDS(sk_horror_model, file = "Tables/sk_horror_model.rds")
+saveRDS(sweden_horror_model, file = "Tables/sweden_horror_model.rds")
+saveRDS(japan_horror_model, file = "Tables/japan_horror_model.rds")
+
 #Note: Japanese movies add higher positive contributions to the rating. That is not the case for Japanese horror movies though, the effect of the interaction is statistically insignificant, negative and substantially small.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(sk_horror_model, sweden_horror_model, 
           japan_horror_model,
-          type = "html", out = "Table4.html", 
+          type = "html", 
           title = "Who Makes Better Horror Movies? South Korea vs.Sweden", 
           omit.stat=c("LL","ser","f","adj.rsq"),
           dep.var.labels.include = FALSE,
@@ -172,12 +197,15 @@ france_romance_model <- lm(rating ~ France*Topic_7, data = dat_kaggle)
 summary(france_romance_model)
 uk_romance_model <- lm(rating ~ UK*Topic_7, data = dat_kaggle)
 summary(uk_romance_model)
+saveRDS(france_romance_model, file = "Tables/france_romance_model.rds")
+saveRDS(uk_romance_model, file = "Tables/uk_romance_model.rds")
+
 # Note: French romances have a statistically significant, negative effect on the rating. On th other hand, rating increases if a British movie turns out to be a romance. 
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(france_romance_model,uk_romance_model,
-          type = "html", out = "Table5.html", 
+          type = "html", 
           title = "Who Makes Better Romance Movies? France vs.UK", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -198,12 +226,14 @@ dat_kaggle$Denmark[is.na(dat_kaggle$Denmark)]<- 0
 # Crime Model
 denmark_crime_model <- lm(rating ~ Denmark*Topic_9, data = dat_kaggle)
 sweden_crime_model <- lm(rating ~ Sweden*Topic_9, data = dat_kaggle)
+saveRDS(denmark_crime_model, file = "Tables/denmark_crime_model.rds")
+saveRDS(sweden_crime_model, file = "Tables/sweden_crime_models.rds")
 # Note: Denmark crime movies fare better than Swedish crime movies.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(denmark_crime_model ,sweden_crime_model,
-          type = "html", out = "Table6.html", 
+          type = "html",  
           title = "Who Makes Better Police Movies? Denmark vs.Sweden", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -220,12 +250,14 @@ usa_crime_model <- lm(rating ~ USA*Topic_9, data = dat_kaggle)
 usa_battle_model<- lm(rating ~ USA*Topic_1, data = dat_kaggle)
 summary(usa_crime_model)
 summary(usa_battle_model)
+saveRDS(usa_crime_model, file = "Tables/usa_crime_model.rds")
+saveRDS(usa_battle_model, file = "Tables/usa_battle_model.rds")
 # Note: USA-made killer-cop-gang-serial films seem to do  better than the average USA-made film.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(usa_crime_model,usa_battle_model,
-          type = "html", out = "Table7.html", 
+          type = "html", 
           title = "USA: Crime & Battle Movies", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -241,12 +273,13 @@ stargazer(usa_crime_model,usa_battle_model,
 # India duration interaction effect model
 india_len_model <- lm(rating ~ India*duration, data = dat_kaggle)
 summary(india_len_model)
+saveRDS(india_len_model, file = "Tables/india_len_model.rds")
 # Note: We have derived above that Indian films tend to have higher ratings and that longer films have higher ratings, but when films are from India, a longer film is accompanied by a lower rating.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(india_len_model,
-          type = "html", out = "Table8.html", 
+          type = "html",  
           title = "India: Are Longer Movies better than other Movies?", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -259,16 +292,17 @@ stargazer(india_len_model,
 ## Fixed Effect Model
 ```{r fe, warning = FALSE}
 # Fixed effect model 
-unit_fe_kaggle <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 + 
-                    Topic_4 + Topic_5 + Topic_6 + Topic_7 + Topic_8 + 
-                    Topic_9 + Topic_10 + as.factor(country), 
-                    data = dat_kaggle)
+# unit_fe_kaggle <- lm(rating ~ Topic_1 + Topic_2 + Topic_3 + 
+#                     Topic_4 + Topic_5 + Topic_6 + Topic_7 + Topic_8 + 
+#                     Topic_9 + Topic_10 + as.factor(country), 
+#                     data = dat_kaggle)
+# saveRDS(unit_fe_kaggle, file = "Tables/unit_fe_kaggle.rds")
 # Note: Constant is quite moderate at 6.9, and the effects of each topic are all below 1 rating unit.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(topics_only_model, unit_fe_kaggle,
-          type = "html", out = "Table9.html", 
+          type = "html", 
           title = "Comparison between Topics and FE Topics Model", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -310,11 +344,12 @@ topics_scraped_model <- lm(Rating ~ Topic_1 + Topic_2 + Topic_3 +
                       Topic_4 + Topic_5 +  Topic_6 + Topic_7 + 
                       Topic_8 + Topic_9 + Topic_10, data = dat_2020)
 summary(topics_scraped_model)
+saveRDS(topics_scraped_model, file = "Tables/topics_scraped_model.rds")
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(topics_scraped_model, 
-          type = "html", out = "Table10.html", 
+          type = "html", 
           title = "Topic Model 2020: Which Topics have better ratings?", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -329,12 +364,13 @@ stargazer(topics_scraped_model,
 # Duration Model
 duration_model_2020 <- lm(Rating ~ Duration, data = dat_2020)
 summary(duration_model_2020)
+saveRDS(duration_model_2020, file = "Tables/duration_model_2020.rds")
 # Note: longer films have higher ratings
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(duration_model_2020, 
-          type = "html", out = "Table11.html", 
+          type = "html", 
           title = "Duration Model for 2020", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -353,11 +389,12 @@ dat_2020$UK[is.na(dat_2020$UK)]<- 0
 
 uk_romance_model_2020 <- lm(Rating ~ UK*Topic_7, data = dat_2020)
 summary(uk_romance_model_2020)
+saveRDS(uk_romance_model_2020, file = "Tables/uk_romance_model_2020.rds")
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(uk_romance_model_2020,
-          type = "html", out = "Table12.html", 
+          type = "html", 
           title = "British Romance Films for 2020", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -380,12 +417,14 @@ usa_crime_model_2020 <- lm(Rating ~ USA*Topic_9, data = dat_2020)
 usa_battle_model_2020 <- lm(Rating ~ USA*Topic_1, data = dat_2020)
 summary(usa_crime_model_2020)
 summary(usa_battle_model_2020)
+saveRDS(usa_crime_model_2020, file = "Tables/usa_crime_model_2020.rds")
+saveRDS(usa_battle_model_2020, file = "Tables/usa_battle_model_2020.rds")
 # Note: USA-made killer-cop-gang-serial films seem to do  better than the average USA-made film.
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(usa_crime_model_2020, usa_battle_model_2020,
-          type = "html", out = "Table13.html", 
+          type = "html", 
           title = "USA: Crime & Battle Movies for 2020", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
@@ -403,12 +442,13 @@ unit_fe_2020 <- lm(Rating ~ Topic_1 + Topic_2 +
                 Topic_3 + Topic_4 + Topic_5 + Topic_6 + 
                 Topic_7 + Topic_8 + Topic_9 + Topic_10 +
                 as.factor(Country), data = dat_2020)
+saveRDS(unit_fe_2020, file = "Tables/unit_fe_2020.rds")
 # Note: Overall rating is high at 8.7, but the other estimates are statistically insignificant. 
 ```
 
 ```{r, results = 'asis', warning = FALSE}
 stargazer(unit_fe_2020, topics_scraped_model,
-          type = "html", out = "Table14.html", 
+          type = "html", 
           title = "Comparison between 2020 Topics Model and 2020 FE Topics Model", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
           dep.var.labels.include = FALSE,
