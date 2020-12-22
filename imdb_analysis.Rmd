@@ -274,7 +274,7 @@ stargazer(usa_crime_model,usa_battle_model,
 india_len_model <- lm(rating ~ India*duration, data = dat_kaggle)
 summary(india_len_model)
 saveRDS(india_len_model, file = "Tables/india_len_model.rds")
-# Note: We have derived above that Indian films tend to have higher ratings and that longer films have higher ratings, but when films are from India, a longer film is accompanied by a lower rating.
+# Note: We have derived above that Indian films tend to have higher ratings and that longer films have higher ratings, but when films are from India, a film's length has almost no predictive effect on its rating.
 ```
 
 ```{r, results = 'asis', warning = FALSE}

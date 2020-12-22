@@ -171,7 +171,7 @@ stargazer(model2, type = "html",
 
 + Hypothesis: Longer films will have lower ratings (because the audience gets bored), but this effect will not hold for films from India because Bollywood films tend to be longer than films from other countries.  
 
-+ Result: In contradiction to our prediction, we found that longer films are associated with a slightly higher ratings, however when films are from India, a longer film is associated with a slightly lower rating.  
++ Result: In contradiction to our prediction, we found that longer films are associated with a slightly higher ratings, however when films are from India, this effect is nearly erased (duration co-efficient = 0.002, compared to 0.016 for non-Indian films).  
 <p>
 
 
