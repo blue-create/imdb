@@ -39,7 +39,7 @@ This Data Analysis proposes models for predicting film quality based on certain 
 Emails: 
 a.spertus-melhus@mpp.hertie-school.org , b.le@mpp.hertie-school.org , a.berjon-sanchez@mpp.hertie-school.org 
 <br> 
-GitHub Repository: https://github.com/adinaspertus/imdb
+Full analysis code available at: https://github.com/adinaspertus/imdb
 <br>
 <br>
 <br>
