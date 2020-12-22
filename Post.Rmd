@@ -44,7 +44,8 @@ While our goal was to develop a predictive model for a film’s rating, we focus
 
 + `Which country’s films are most highly rated if we were to compare movies from Canada, India, the UK, and the US?`  
 
-+ `Do longer films get higher or lower ratings? What if a film is from India?`  
++ `Do longer films get higher or lower ratings? What if a film is from India?` 
+
 + `How does the effect of each topic on rating change when we hold country as a fixed effect constant?` 
 
 Additionally, the following research questions were developed after the topic model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to topics 1, 6, 7, and 9 (respectively).  
