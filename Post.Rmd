@@ -12,11 +12,27 @@ output:
 <br>
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 
 library(stargazer)
 library(kableExtra)
 ```
+
+```{css, echo = FALSE}
+
+table, td, th {
+  border: none;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+```
+
 
 This Data Analysis proposes models for predicting film quality based on certain metadata attributes and the text of the film’s IMDb description. We developed a topic model based on film descriptions from past years, and used this and other variables to develop models for predicting a film’s rating. We then tested the model’s validity on a set of freshly-scraped 2020 films. Ba Linh took the lead on text scraping, Anabel led the import and formatting the Kaggle data, and Adina focused on the topic model development. We were all actively involved in the final linear model development and testing.
 
@@ -168,8 +184,9 @@ stargazer(model3, model3_india,
           type = "html", 
           title = "Duration Models", 
           omit.stat=c("LL","ser","f","adj.rsq"), 
-          dep.var.labels.include = FALSE,
-          column.labels = c("Duration model", "Indian duration model"),
+          dep.var.labels.include = TRUE,
+          column.labels = c("Duration", "Duration, India"),
+          dep.var.labels = c("rating", "rating"),
           header = FALSE,
           single.row = TRUE, 
           column.sep.width = "3pt")
