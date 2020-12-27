@@ -208,6 +208,8 @@ stargazer(model3, model3_india,
 #           header = FALSE,
 #           single.row = TRUE, 
 #           column.sep.width = "3pt")
+
+# Note: The model findings are available in the analysis script only due to the large size of the model itself.
 ```
 
 *Note: The following hypothesis were developed after the model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to topics 1, 6, 7, and 9 (respectively).*

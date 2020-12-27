@@ -1538,7 +1538,7 @@ border: 0;
   div.column{display: inline-block; vertical-align: top; width: 50%;}
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
-      </style>
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -1584,6 +1584,7 @@ h6 {
   text-align: left;
 }
 </style>
+
 
 
 
@@ -2239,7 +2240,7 @@ R<sup>2</sup>
 <h4>3. Do longer films get higher or lower ratings?</h4>
 <ul>
 <li><p>Hypothesis: Longer films will have lower ratings (because the audience gets bored), but this effect will not hold for films from India because Bollywood films tend to be longer than films from other countries.</p></li>
-<li><p>Result: In contradiction to our prediction, we found that longer films are associated with a slightly higher ratings, however when films are from India, a longer film is associated with a slightly lower rating.<br />
+<li><p>Result: In contradiction to our prediction, we found that longer films are associated with a slightly higher ratings, however when films are from India, this effect is largely erased (each additional minute of duration is associated with a 0.002 score boost for Indian films, compared to 0.016 boost for non-Indian films).<br />
 </p>
 <p></li>
 </ul>
@@ -2393,7 +2394,9 @@ R<sup>2</sup>
 #           column.labels = c(&quot;Topics Model&quot;, &quot; FE Topics Model&quot;),
 #           header = FALSE,
 #           single.row = TRUE, 
-#           column.sep.width = &quot;3pt&quot;)</code></pre>
+#           column.sep.width = &quot;3pt&quot;)
+
+# Note: The model findings are available in the analysis script only due to the large size of the model itself.</code></pre>
 <p><em>Note: The following hypothesis were developed after the model was created, and “Battle”, “Horror” “Romance” and “Crime” were assigned to topics 1, 6, 7, and 9 (respectively).</em></p>
 </div>
 <div id="considering-south-korea-sweden-and-japan-three-countries-with-a-reputation-for-macabre-cinema-who-makes-the-best-horror-films" class="section level4">
@@ -3868,7 +3871,7 @@ R<sup>2</sup>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
